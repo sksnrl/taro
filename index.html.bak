@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="ANSI">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타로 카드 뽑기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            text-align: center;
+        }
+        h1 {
+            margin: 20px 0;
+        }
+        #card-container, #selected-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px;
+        }
+        .card {
+            width: 80px;
+            height: 110px;
+            background-image: url('back.png');
+            background-size: cover;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.5s ease;
+        }
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        .selected-card {
+            width: 200px;
+            height: 320px;
+            background-size: cover;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px;
+        }
+        button:hover {
+            background-color: #7c3aed;
+        }
+
+@keyframes shuffle {
+    0% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(5deg); }
+    50% { transform: translateY(20px) rotate(-5deg); }
+    75% { transform: translateY(-10px) rotate(3deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+}
+.card.shuffling {
+    animation: shuffle 0.5s ease-in-out;
+}
+
+    </style>
+</head>
+<body>
+    <h1>타로 카드 뽑기</h1>
+    <button onclick="shuffleCards()">카드 섞기</button>
+    <div id="card-container"></div>
+    <div id="selected-container"></div>
+
+    <script>
+const tarotCards = [
+    { name: "The Fool", image: "The_Fool.jpg", meaning: "새로운 시작과 모험을 의미합니다." },
+    { name: "The Magician", image: "The_Magician.jpg", meaning: "창의력과 자원을 활용하세요." },
+    { name: "The High Priestess", image: "The_High_Priestess.jpg", meaning: "내면의 지혜를 따르세요." },
+    { name: "The Empress", image: "The_Empress.jpg", meaning: "풍요와 사랑을 상징합니다." },
+    { name: "The Emperor", image: "The_Emperor.jpg", meaning: "질서와 권위를 의미합니다." },
+    { name: "The Hierophant", image: "The_Hierophant.jpg", meaning: "전통과 가르침을 따르세요." },
+    { name: "The Lovers", image: "The_Lovers.jpg", meaning: "관계와 중요한 선택의 순간입니다." },
+    { name: "The Chariot", image: "The_Chariot.jpg", meaning: "결단력과 성공을 의미합니다." },
+    { name: "Strength", image: "Strength.jpg", meaning: "인내와 용기가 필요합니다." },
+    { name: "The Hermit", image: "The_Hermit.jpg", meaning: "자아성찰의 시간이 필요합니다." },
+    { name: "Wheel of Fortune", image: "Wheel_of_Fortune.jpg", meaning: "운명의 변화를 맞이할 시기입니다." },
+    { name: "Justice", image: "Justice.jpg", meaning: "공정함과 균형을 유지하세요." },
+    { name: "The Hanged Man", image: "The_Hanged_Man.jpg", meaning: "새로운 관점과 희생이 필요합니다." },
+    { name: "Death", image: "Death.jpg", meaning: "변화와 새로운 시작의 상징입니다." },
+    { name: "Temperance", image: "Temperance.jpg", meaning: "조화와 균형을 이루세요." },
+    { name: "The Devil", image: "The_Devil.jpg", meaning: "유혹과 집착에서 벗어나세요." },
+    { name: "The Tower", image: "The_Tower.jpg", meaning: "예상치 못한 변화와 충격이 있을 수 있습니다." },
+    { name: "The Star", image: "The_Star.jpg", meaning: "희망과 영감을 의미합니다." },
+    { name: "The Moon", image: "The_Moon.jpg", meaning: "불확실함과 감정을 직시하세요." },
+    { name: "The Sun", image: "The_Sun.jpg", meaning: "행복과 성공이 찾아옵니다." },
+    { name: "Judgement", image: "Judgement.jpg", meaning: "자기 반성과 새로운 기회입니다." },
+    { name: "The World", image: "The_World.jpg", meaning: "완성과 성취의 시기입니다." },
+	    { name: "Ace of Cups", image: "Ace_of_Cups.jpg", meaning: "새로운 감정과 사랑의 시작입니다." },
+    { name: "Two of Cups", image: "Two_of_Cups.jpg", meaning: "조화로운 관계와 파트너십입니다." },
+    { name: "Three of Cups", image: "Three_of_Cups.jpg", meaning: "기쁨과 축하의 순간입니다." },
+    { name: "Four of Cups", image: "Four_of_Cups.jpg", meaning: "무관심과 내적 고민의 시기입니다." },
+    { name: "Five of Cups", image: "Five_of_Cups.jpg", meaning: "상실감과 후회의 감정입니다." },
+    { name: "Six of Cups", image: "Six_of_Cups.jpg", meaning: "추억과 과거의 회상이 다가옵니다." },
+    { name: "Seven of Cups", image: "Seven_of_Cups.jpg", meaning: "혼란과 선택의 순간입니다." },
+    { name: "Eight of Cups", image: "Eight_of_Cups.jpg", meaning: "떠남과 새로운 시작을 의미합니다." },
+    { name: "Nine of Cups", image: "Nine_of_Cups.jpg", meaning: "소망이 이루어지는 시기입니다." },
+    { name: "Ten of Cups", image: "Ten_of_Cups.jpg", meaning: "가족과 관계의 완전한 행복입니다." },
+    { name: "Ace of Pentacles", image: "Ace_of_Pentacles.jpg", meaning: "물질적 성공과 기회의 시작입니다." },
+    { name: "Two of Pentacles", image: "Two_of_Pentacles.jpg", meaning: "균형과 다재다능함을 나타냅니다." },
+    { name: "Three of Swords", image: "Three_of_Swords.jpg", meaning: "슬픔과 이별의 상징입니다." },
+    { name: "Four of Wands", image: "Four_of_Wands.jpg", meaning: "축하와 안정을 의미합니다." },
+	    { name: "Five of Wands", image: "Five_of_Wands.jpg", meaning: "경쟁과 갈등을 의미합니다." },
+    { name: "Six of Wands", image: "Six_of_Wands.jpg", meaning: "성공과 인정의 시기입니다." },
+    { name: "Seven of Wands", image: "Seven_of_Wands.jpg", meaning: "방어와 도전의 시간입니다." },
+    { name: "Eight of Wands", image: "Eight_of_Wands.jpg", meaning: "빠른 진전과 변화가 있습니다." },
+    { name: "Nine of Wands", image: "Nine_of_Wands.jpg", meaning: "지속적인 노력과 방어가 필요합니다." },
+    { name: "Ten of Wands", image: "Ten_of_Wands.jpg", meaning: "무거운 책임과 부담을 나타냅니다." },
+    { name: "Page of Wands", image: "Page_of_Wands.jpg", meaning: "새로운 아이디어와 탐험의 시작입니다." },
+    { name: "Knight of Wands", image: "Knight_of_Wands.jpg", meaning: "열정과 모험적인 행동을 상징합니다." },
+    { name: "Queen of Wands", image: "Queen_of_Wands.jpg", meaning: "자신감과 창의력을 나타냅니다." },
+    { name: "King of Wands", image: "King_of_Wands.jpg", meaning: "리더십과 비전을 가진 사람입니다." },
+	    { name: "Ace of Swords", image: "Ace_of_Swords.jpg", meaning: "정확한 사고와 새로운 아이디어의 시작입니다." },
+    { name: "Two of Swords", image: "Two_of_Swords.jpg", meaning: "결정의 갈림길과 갈등을 의미합니다." },
+    { name: "Three of Swords", image: "Three_of_Swords.jpg", meaning: "슬픔과 이별의 상징입니다." },
+    { name: "Four of Swords", image: "Four_of_Swords.jpg", meaning: "휴식과 회복의 시기입니다." },
+    { name: "Five of Swords", image: "Five_of_Swords.jpg", meaning: "승리 후의 갈등과 후회입니다." },
+    { name: "Six of Swords", image: "Six_of_Swords.jpg", meaning: "평화와 새로운 시작을 향한 여행입니다." },
+    { name: "Seven of Swords", image: "Seven_of_Swords.jpg", meaning: "비밀과 속임수의 위험을 나타냅니다." },
+    { name: "Eight of Swords", image: "Eight_of_Swords.jpg", meaning: "제한된 상황과 두려움을 의미합니다." },
+    { name: "Nine of Swords", image: "Nine_of_Swords.jpg", meaning: "불안과 걱정으로 인한 고통입니다." },
+    { name: "Ten of Swords", image: "Ten_of_Swords.jpg", meaning: "배신과 끝을 맞이하는 시기입니다." },
+    { name: "Page of Swords", image: "Page_of_Swords.jpg", meaning: "호기심과 새로운 정보에 대한 탐구입니다." },
+    { name: "Knight of Swords", image: "Knight_of_Swords.jpg", meaning: "신속한 행동과 결정적인 순간을 나타냅니다." },
+    { name: "Queen of Swords", image: "Queen_of_Swords.jpg", meaning: "명확한 사고와 직관력을 가진 사람입니다." },
+    { name: "King of Swords", image: "King_of_Swords.jpg", meaning: "논리적 사고와 결단력을 가진 사람입니다." },
+	    { name: "Ace of Pentacles", image: "Ace_of_Pentacles.jpg", meaning: "물질적 성공과 기회의 시작입니다." },
+    { name: "Two of Pentacles", image: "Two_of_Pentacles.jpg", meaning: "균형과 다재다능함을 나타냅니다." },
+    { name: "Three of Pentacles", image: "Three_of_Pentacles.jpg", meaning: "협력과 팀워크를 통한 성공입니다." },
+    { name: "Four of Pentacles", image: "Four_of_Pentacles.jpg", meaning: "재정적인 안정과 집착을 나타냅니다." },
+    { name: "Five of Pentacles", image: "Five_of_Pentacles.jpg", meaning: "재정적 어려움과 결핍을 나타냅니다." },
+    { name: "Six of Pentacles", image: "Six_of_Pentacles.jpg", meaning: "균형과 나눔의 시기입니다." },
+    { name: "Seven of Pentacles", image: "Seven_of_Pentacles.jpg", meaning: "인내와 성과를 기다리는 시기입니다." },
+    { name: "Eight of Pentacles", image: "Eight_of_Pentacles.jpg", meaning: "기술과 노력으로 성취하는 시기입니다." },
+    { name: "Nine of Pentacles", image: "Nine_of_Pentacles.jpg", meaning: "물질적 풍요와 독립적인 성취입니다." },
+    { name: "Ten of Pentacles", image: "Ten_of_Pentacles.jpg", meaning: "가족과 세대 간의 물질적 풍요와 안정입니다." },
+    { name: "Page of Pentacles", image: "Page_of_Pentacles.jpg", meaning: "학습과 새로운 기회의 시작입니다." },
+    { name: "Knight of Pentacles", image: "Knight_of_Pentacles.jpg", meaning: "성실함과 꾸준함을 나타냅니다." },
+    { name: "Queen of Pentacles", image: "Queen_of_Pentacles.jpg", meaning: "안정과 물질적 풍요를 추구하는 사람입니다." },
+    { name: "King of Pentacles", image: "King_of_Pentacles.jpg", meaning: "부와 안정적인 성취를 이룬 사람입니다." },
+
+
+    // 나머지 카드 데이터 추가
+];
+
+function showSelectedCards() {
+    cardContainer.innerHTML = '';
+    selectedContainer.innerHTML = '';
+
+    selectedCards.forEach(card => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("selected-card");
+        cardDiv.style.backgroundImage = `url('${card.image}')`;
+
+        // 카드 이름 표시
+        const cardName = document.createElement("div");
+        cardName.textContent = card.name;
+        cardName.style.fontWeight = "bold";
+        cardName.style.marginBottom = "10px";
+
+        // 카드 의미 표시
+        const cardMeaning = document.createElement("div");
+        cardMeaning.textContent = card.meaning;
+        cardMeaning.style.marginTop = "10px";
+        cardMeaning.style.fontSize = "0.9em";
+
+        // 카드 요소 조립
+        const cardContainerDiv = document.createElement("div");
+        cardContainerDiv.appendChild(cardName);
+        cardContainerDiv.appendChild(cardDiv);
+        cardContainerDiv.appendChild(cardMeaning);
+        cardContainerDiv.style.textAlign = "center";
+        cardContainerDiv.style.margin = "20px";
+
+        selectedContainer.appendChild(cardContainerDiv);
+    });
+}
+        const cardContainer = document.getElementById("card-container");
+        const selectedContainer = document.getElementById("selected-container");
+        let selectedCards = [];
+
+function shuffleCards() {
+    selectedCards = [];
+    selectedContainer.innerHTML = '';
+    cardContainer.innerHTML = '';
+
+    const shuffled = [...tarotCards].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach((card, index) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("card", "shuffling");
+        cardDiv.dataset.name = card.name;  // 카드 이름을 저장
+
+        // 애니메이션 후 뒷면으로 표시
+        setTimeout(() => {
+            cardDiv.classList.remove("shuffling");
+        }, 500 + index * 10);
+
+        cardDiv.onclick = () => flipCard(cardDiv);
+        cardContainer.appendChild(cardDiv);
+    });
+}
+
+function flipCard(cardDiv) {
+    if (selectedCards.length >= 3 || cardDiv.classList.contains("flipped")) return;
+
+    const cardName = cardDiv.dataset.name;
+    const card = tarotCards.find(c => c.name === cardName);  // 카드 객체 찾기
+    cardDiv.classList.add("flipped");
+
+    // 카드 앞면 이미지 업데이트
+    cardDiv.style.backgroundImage = `url('${card.image}')`;  // 'images' 폴더 경로
+
+    // 랜덤으로 상하 반전 여부 결정 (50% 확률)
+    const isReversed = Math.random() > 0.5; // true/false 랜덤값
+
+    // 선택된 카드 배열에 카드 의미와 함께 reversed 상태 저장
+    selectedCards.push({ name: card.name, image: card.image, meaning: card.meaning, reversed: isReversed });
+
+    // 3개의 카드가 선택되었을 때, 선택된 카드들을 보여줌
+    if (selectedCards.length === 3) showSelectedCards();
+}
+function showSelectedCards() {
+    cardContainer.innerHTML = '';
+    selectedContainer.innerHTML = '';
+
+    selectedCards.forEach(card => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("selected-card");
+
+        // 카드의 이미지 및 변형 상태 적용
+        cardDiv.style.backgroundImage = `url('${card.image}')`;  // 수정된 경로
+
+
+
+
+        // 상하 반전 여부를 반영하여 카드 회전 적용
+        cardDiv.style.transform = card.reversed ? "rotate(180deg)" : "rotate(0deg)";
+
+        // 카드 이름 표시
+        const cardName = document.createElement("div");
+        cardName.textContent = card.name;
+        cardName.style.fontWeight = "bold";
+        cardName.style.marginBottom = "10px";
+
+        // 카드 의미 표시
+        const cardMeaning = document.createElement("div");
+        cardMeaning.textContent = card.meaning;
+        cardMeaning.style.marginTop = "10px";
+        cardMeaning.style.fontSize = "0.9em";
+
+        // 카드 요소 조합
+        const cardContainerDiv = document.createElement("div");
+        cardContainerDiv.appendChild(cardName);
+        cardContainerDiv.appendChild(cardDiv);
+        cardContainerDiv.appendChild(cardMeaning);
+        cardContainerDiv.style.textAlign = "center";
+        cardContainerDiv.style.margin = "20px";
+
+        selectedContainer.appendChild(cardContainerDiv);
+    });
+}
+
+shuffleCards();  // 초기 카드 섞기
+    </script>
+</body>
+</html>
