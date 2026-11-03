@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘의 운명 — 사주 × 연령대 × MBTI 맞춤 운세</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+  :root {
+    --bg-main: #080a12;
+    --bg-card: #121626;
+    --bg-card-sub: #1b2138;
+    --gold: #f5c451;
+    --gold-light: #ffe59e;
+    --purple: #8b6dff;
+    --text-main: #f8fafc;
+    --text-sub: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border: rgba(255, 255, 255, 0.14);
+    --wood: #22c55e;
+    --fire: #ef4444;
+    --earth: #eab308;
+    --metal: #e2e8f0;
+    --water: #3b82f6;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    font-size: 18px;
+  }
+
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: radial-gradient(circle at top, #1b2242 0%, var(--bg-main) 75%);
+    color: var(--text-main);
+    line-height: 1.75;
+    min-height: 100vh;
+    padding-bottom: 80px;
+    word-break: keep-all;
+  }
+
+  .container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 20px 16px;
+  }
+
+  /* 상단 헤더 */
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px;
+    background: rgba(18, 22, 38, 0.95);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    margin-bottom: 22px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .brand-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #080a12;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .brand-title h1 {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--gold-light);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .brand-title p {
+    font-size: 15px;
+    color: var(--text-sub);
+    margin-top: 4px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .day-toggle-group {
+    display: flex;
+    background: var(--bg-card-sub);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .day-btn {
+    background: transparent;
+    color: var(--text-sub);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .day-btn.active {
+    background: var(--gold);
+    color: #080a12;
+  }
+
+  .btn-util {
+    background: var(--bg-card-sub);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .btn-util:hover {
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+
+  /* 공통 카드 */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--gold-light);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 14px;
+  }
+
+  /* 접힌 입력 요약 바 */
+  #collapsedInputBar {
+    display: none;
+    background: linear-gradient(135deg, #1b223d, #13182b);
+    border: 2px solid rgba(245, 196, 81, 0.45);
+    border-radius: 18px;
+    padding: 16px 22px;
+    margin-bottom: 22px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .collapsed-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--gold-light);
+  }
+
+  .collapsed-sub {
+    font-size: 15px;
+    color: var(--text-sub);
+    font-weight: 600;
+  }
+
+  .btn-reopen {
+    background: var(--gold);
+    color: #080a12;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  /* 1. 입력 폼 영역 */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 720px) {
+    .form-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--gold-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .form-control {
+    background: var(--bg-card-sub);
+    border: 2px solid var(--border);
+    color: var(--text-main);
+    padding: 15px 18px;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .form-control::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .form-control:focus {
+    border-color: var(--gold);
+  }
+
+  .cal-type-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .cal-radio-btn {
+    flex: 1;
+    background: var(--bg-card-sub);
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .cal-radio-btn.active {
+    background: rgba(245, 196, 81, 0.2);
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+
+  .btn-submit {
+    width: 100%;
+    margin-top: 24px;
+    padding: 20px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--gold), #e08e0b);
+    color: #080a12;
+    font-size: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 8px 25px rgba(245, 196, 81, 0.35);
+  }
+
+  .btn-submit:active {
+    transform: scale(0.98);
+  }
+
+  .empty-notice {
+    text-align: center;
+    padding: 36px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed var(--border);
+    border-radius: 20px;
+    color: var(--text-sub);
+    font-size: 18px;
+    margin-bottom: 24px;
+  }
+
+  .empty-notice strong {
+    display: block;
+    font-size: 22px;
+    color: var(--gold-light);
+    margin-bottom: 8px;
+  }
+
+  /* 최근 조회 칩 */
+  .recent-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  .recent-label {
+    font-size: 15px;
+    color: var(--text-sub);
+    font-weight: 800;
+  }
+
+  .chip {
+    background: var(--bg-card-sub);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .chip:hover {
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+
+  /* 결과 영역 */
+  #resultArea {
+    display: none;
+  }
+
+  /* 방송 진행자용 3줄 핵심 요약 브리핑 박스 */
+  .mc-briefing-card {
+    background: linear-gradient(145deg, #1f2747, #141930);
+    border: 2px solid var(--gold);
+    border-radius: 22px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 30px rgba(245, 196, 81, 0.18);
+  }
+
+  .mc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .mc-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold-light);
+  }
+
+  .btn-copy {
+    background: rgba(245, 196, 81, 0.2);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .mc-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 18px;
+  }
+
+  .mc-line {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border-left: 4px solid var(--gold);
+  }
+
+  /* 시간대별 리듬 (오전/오후/밤) */
+  .time-rhythm-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  @media (min-width: 680px) {
+    .time-rhythm-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .rhythm-box {
+    background: rgba(8, 10, 18, 0.55);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+
+  .rhythm-time {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+
+  .rhythm-desc {
+    font-size: 16px;
+    color: var(--text-sub);
+    line-height: 1.55;
+  }
+
+  /* 종합 점수 & 사주 명식 레이아웃 */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 840px) {
+    .summary-grid {
+      grid-template-columns: 1fr 1.35fr;
+    }
+  }
+
+  .score-box {
+    background: linear-gradient(160deg, #21284a 0%, #14182e 100%);
+    border: 2px solid rgba(245, 196, 81, 0.4);
+    border-radius: 20px;
+    padding: 28px 22px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .user-badge {
+    display: inline-block;
+    background: rgba(139, 109, 255, 0.25);
+    border: 1px solid rgba(139, 109, 255, 0.6);
+    color: #ddd6fe;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .score-number {
+    font-size: 64px;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1.05;
+  }
+
+  .score-grade {
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--gold-light);
+    margin-top: 8px;
+  }
+
+  .score-headline {
+    margin-top: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.5;
+  }
+
+  .iljin-badge {
+    margin-top: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-sub);
+    background: rgba(0, 0, 0, 0.45);
+    padding: 12px 16px;
+    border-radius: 12px;
+    width: 100%;
+    text-align: left;
+    line-height: 1.65;
+  }
+
+  /* 사주 4주 테이블 */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .pillar-col {
+    background: var(--bg-card-sub);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 12px 6px;
+    text-align: center;
+  }
+
+  .pillar-col.me-col {
+    border: 2px solid var(--gold);
+    background: rgba(245, 196, 81, 0.08);
+  }
+
+  .pillar-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    margin-bottom: 4px;
+  }
+
+  .pillar-ten {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+  }
+
+  .ganji-char {
+    font-size: 26px;
+    font-weight: 900;
+    width: 52px;
+    height: 52px;
+    margin: 5px auto;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .pillar-sub {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-top: 6px;
+  }
+
+  .pillar-animal {
+    font-size: 13px;
+    color: var(--gold-light);
+    margin-top: 2px;
+    font-weight: 700;
+  }
+
+  /* 오행 컬러 */
+  .el-wood { background: rgba(34, 197, 94, 0.22); border: 2px solid var(--wood); color: #86efac; }
+  .el-fire { background: rgba(239, 68, 68, 0.22); border: 2px solid var(--fire); color: #fca5a5; }
+  .el-earth { background: rgba(234, 179, 8, 0.22); border: 2px solid var(--earth); color: #fde047; }
+  .el-metal { background: rgba(226, 232, 240, 0.22); border: 2px solid var(--metal); color: #f8fafc; }
+  .el-water { background: rgba(59, 130, 246, 0.22); border: 2px solid var(--water); color: #93c5fd; }
+
+  .strength-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .s-tag {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  .s-tag strong {
+    color: var(--gold-light);
+  }
+
+  .ohaeng-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    background: rgba(0, 0, 0, 0.28);
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .ohaeng-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+  }
+
+  .ohaeng-name {
+    width: 82px;
+    font-weight: 800;
+  }
+
+  .ohaeng-track {
+    flex: 1;
+    height: 13px;
+    background: #080a12;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .ohaeng-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  .ohaeng-val {
+    width: 66px;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  .fusion-banner {
+    margin-top: 22px;
+    background: linear-gradient(135deg, rgba(139, 109, 255, 0.16), rgba(245, 196, 81, 0.12));
+    border: 1px solid rgba(245, 196, 81, 0.45);
+    border-radius: 18px;
+    padding: 22px 24px;
+  }
+
+  .fusion-banner-title {
+    font-size: 19px;
+    font-weight: 900;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+  }
+
+  .fusion-banner p {
+    font-size: 18px;
+    color: var(--text-main);
+    line-height: 1.8;
+  }
+
+  .lucky-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 680px) {
+    .lucky-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .lucky-item {
+    background: var(--bg-card-sub);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+  }
+
+  .lucky-item span {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  .lucky-item strong {
+    display: block;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--gold-light);
+    margin-top: 6px;
+  }
+
+  /* 3. 8대 분야 탭 & 상세 카드 */
+  .view-mode-btn {
+    background: var(--bg-card-sub);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .tabs-wrap {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  @media (min-width: 680px) {
+    .tabs-wrap {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .tab-btn {
+    position: relative;
+    background: var(--bg-card-sub);
+    border: 2px solid var(--border);
+    color: var(--text-main);
+    padding: 14px 10px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .tab-btn .mini-score {
+    font-size: 14px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--gold);
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, rgba(245, 196, 81, 0.3), rgba(139, 109, 255, 0.3));
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+
+  .tab-tag {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .tag-best { background: #22c55e; color: #052e16; }
+  .tag-care { background: #f97316; color: #fff; }
+
+  .category-detail {
+    background: var(--bg-card-sub);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 26px 22px;
+    margin-bottom: 18px;
+  }
+
+  .cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .cat-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--gold-light);
+  }
+
+  .cat-score {
+    font-size: 20px;
+    font-weight: 900;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .score-high { color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); }
+  .score-mid  { color: var(--gold); border: 1px solid rgba(245, 196, 81, 0.4); }
+  .score-low  { color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.4); }
+
+  .cat-main-text {
+    font-size: 19px;
+    line-height: 1.85;
+    margin-bottom: 24px;
+    color: var(--text-main);
+  }
+
+  .sub-boxes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  @media (min-width: 680px) {
+    .sub-boxes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .info-box {
+    background: rgba(8, 10, 18, 0.65);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+  }
+
+  .info-box-title {
+    font-size: 16px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+
+  .info-box.good .info-box-title { color: #4ade80; }
+  .info-box.warn .info-box-title { color: #fb923c; }
+  .info-box.act { grid-column: 1 / -1; border-color: rgba(245, 196, 81, 0.45); }
+  .info-box.act .info-box-title { color: var(--gold-light); }
+
+  .info-box p {
+    font-size: 17px;
+    color: #e2e8f0;
+    line-height: 1.75;
+  }
+
+  /* 4. 스페셜 운명 카드 3장 뽑기 */
+  .tarot-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  @media (min-width: 680px) {
+    .tarot-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .tarot-card {
+    background: linear-gradient(145deg, #232946, #121629);
+    border: 2px solid rgba(245, 196, 81, 0.45);
+    border-radius: 18px;
+    min-height: 210px;
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.25s, border-color 0.25s;
+    user-select: none;
+  }
+
+  .tarot-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold);
+  }
+
+  .tarot-card.picked {
+    background: linear-gradient(145deg, #2d1f4e, #191c36);
+    border-color: var(--gold);
+  }
+
+  .tarot-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  .tarot-name {
+    font-size: 19px;
+    font-weight: 900;
+    color: var(--gold-light);
+    margin-bottom: 8px;
+  }
+
+  .tarot-desc {
+    font-size: 16px;
+    color: #e2e8f0;
+    line-height: 1.65;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-top: 36px;
+    padding: 0 12px;
+  }
+
+  .cross-analysis-panel { margin-top:16px; padding:16px; border:1px solid rgba(245,196,81,.25); border-radius:14px; background:rgba(8,10,18,.42); }
+  .cross-analysis-panel h3 { color:var(--gold-light); font-size:17px; margin:0 0 8px; }
+  .cross-analysis-panel p { color:var(--text-sub); font-size:16px; line-height:1.65; margin:6px 0; }
+  .method-note { color:var(--text-muted); font-size:14px; margin-top:12px; line-height:1.55; }
+  @media (max-width: 380px) { .pillars-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .card { padding:20px 14px; } .section-title { font-size:19px; } .header-actions { width:100%; } .day-toggle-group { width:100%; } .day-btn { flex:1; padding:9px 6px; } }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 상단 헤더 -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">命</div>
+      <div class="brand-title">
+        <h1>오늘의 운명</h1>
+        <p id="todayInfoText">사주 자연물 기질 × 연령대별 현실 처방 × MBTI 성향</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <!-- 심야 방송 대비 오늘/내일 전환 스위치 -->
+      <div class="day-toggle-group">
+        <button class="day-btn active" id="btnToday" onclick="setTargetDayOffset(0)">☀️ 오늘 운세</button>
+        <button class="day-btn" id="btnTomorrow" onclick="setTargetDayOffset(1)">🌙 내일 운세 미리보기</button>
+      </div>
+      <button class="btn-util" onclick="resetForm()">🔄 새 입력</button>
+      <button class="btn-util" onclick="toggleSound()" id="soundBtn">🔊 효과음 ON</button>
+    </div>
+  </header>
+
+  <!-- 결과 조회 후 접힌 요약 바 -->
+  <div id="collapsedInputBar">
+    <div class="collapsed-info">
+      <span id="collapsedSummaryText">대상자 정보</span>
+      <span class="collapsed-sub" id="collapsedSubText"></span>
+    </div>
+    <button class="btn-reopen" onclick="expandInputCard()">✏️ 다른 대상자 입력 / 수정</button>
+  </div>
+
+  <!-- ① 사용자 정보 입력 카드 -->
+  <section class="card" id="inputCardSection">
+    <div class="section-title">
+      <span>✨ 1. 운세 대상자 정보 입력</span>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="userName">닉네임 / 이름</label>
+        <input type="text" id="userName" class="form-control" placeholder="이름 또는 닉네임을 입력하세요" value="">
+      </div>
+
+      <div class="form-group">
+        <label for="birthInput">
+          <span>생년월일 (숫자 8자리 빠른 입력)</span>
+          <span id="agePreviewBadge" style="font-size:14px; color:#86efac;"></span>
+        </label>
+        <input type="text" id="birthInput" class="form-control" placeholder="예: 19980515 (숫자 8자리 입력)" maxlength="10" oninput="handleBirthInput(this)">
+        <div class="cal-type-row">
+          <div class="cal-radio-btn active" id="calSolar" onclick="setCalType('solar')">☀️ 양력</div>
+          <div class="cal-radio-btn" id="calLunar" onclick="setCalType('lunar')">🌙 음력(평달)</div>
+          <div class="cal-radio-btn" id="calLeap" onclick="setCalType('leap')">🌕 음력(윤달)</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="birthTimeSlot">태어난 시간대 선택 (한국 표준시 기준 · 지역 보정 미적용)</label>
+        <select id="birthTimeSlot" class="form-control">
+          <option value="unknown">❓ 출생시간 모름 (생년월일 3기둥으로 분석)</option>
+          <option value="00:00">🐭 밤 11:30 ~ 새벽 01:29 (자시 · 밤의 시작)</option>
+          <option value="02:00">🐮 새벽 01:30 ~ 새벽 03:29 (축시 · 깊은 새벽)</option>
+          <option value="04:00">🐯 새벽 03:30 ~ 아침 05:29 (인시 · 여명의 시간)</option>
+          <option value="06:00">🐰 아침 05:30 ~ 아침 07:29 (묘시 · 해 뜨는 아침)</option>
+          <option value="08:00">🐲 아침 07:30 ~ 오전 09:29 (진시 · 활기찬 오전)</option>
+          <option value="10:00">🐍 오전 09:30 ~ 낮 11:29 (사시 · 집중의 시간)</option>
+          <option value="12:00">🐴 낮 11:30 ~ 오후 01:29 (오시 · 한낮의 태양)</option>
+          <option value="14:00">🐑 오후 01:30 ~ 오후 03:29 (미시 · 오후의 여유)</option>
+          <option value="16:00">🐵 오후 03:30 ~ 저녁 05:29 (신시 · 결실의 오후)</option>
+          <option value="18:00">🐔 저녁 05:30 ~ 저녁 07:29 (유시 · 해 지는 저녁)</option>
+          <option value="20:00">🐶 저녁 07:30 ~ 밤 09:29 (술시 · 편안한 밤)</option>
+          <option value="22:00">🐷 밤 09:30 ~ 밤 11:29 (해시 · 하루의 마무리)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="userMbti">MBTI 성향 선택</label>
+        <select id="userMbti" class="form-control">
+          <option value="" selected disabled>MBTI 유형을 선택해 주세요</option>
+          <option value="ENFP">ENFP — 열정 넘치는 스파크형 활동가</option>
+          <option value="ENFJ">ENFJ — 사람을 이끄는 따뜻한 리더</option>
+          <option value="ENTP">ENTP — 틀을 깨는 아이디어 혁신가</option>
+          <option value="ENTJ">ENTJ — 목표를 돌파하는 대담한 통솔자</option>
+          <option value="ESFP">ESFP — 분위기 메이커 자유로운 스타</option>
+          <option value="ESFJ">ESFJ — 주변을 살뜰히 챙기는 외교관</option>
+          <option value="ESTP">ESTP — 순발력 뛰어난 실전형 사업가</option>
+          <option value="ESTJ">ESTJ — 빈틈없고 체계적인 관리자</option>
+          <option value="INFP">INFP — 진정성 깊은 감성 중재자</option>
+          <option value="INFJ">INFJ — 본질을 꿰뚫는 통찰력 선지자</option>
+          <option value="INTP">INTP — 원리를 파고드는 논리적 사색가</option>
+          <option value="INTJ">INTJ — 큰 그림을 설계하는 전략가</option>
+          <option value="ISFP">ISFP — 온화하고 감각적인 예술가</option>
+          <option value="ISFJ">ISFJ — 묵묵히 책임을 다하는 수호자</option>
+          <option value="ISTP">ISTP — 핵심만 빠르게 해결하는 장인</option>
+          <option value="ISTJ">ISTJ — 원칙과 신뢰의 논리주의자</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="runFortune()">🔮 사주 × 연령대 × MBTI 맞춤 운세 확인하기</button>
+
+    <div class="recent-bar" id="recentBar">
+      <span class="recent-label">최근 조회 기록:</span>
+      <div id="recentChips" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+  </section>
+
+  <!-- 대기 안내 문구 -->
+  <div id="emptyNotice" class="empty-notice">
+    <strong>운세 대상자의 정보를 입력해 주세요</strong>
+    생년월일과 선택 정보를 입력하면 사주 기초 구조와 MBTI 성향을 교차해 참고용 조언을 제공하며,<br>
+    어려운 한자어 없이 쏙쏙 이해되는 맞춤형 운세를 알려드립니다.
+  </div>
+
+  <!-- 결과 영역 -->
+  <div id="resultArea">
+    <!-- 방송 진행자용 3줄 핵심 브리핑 & 시간대별 흐름 -->
+    <section class="mc-briefing-card">
+      <div class="mc-header">
+        <div class="mc-title" id="mcTitle">🎙️ 한눈에 읽는 오늘의 3줄 핵심 브리핑</div>
+        <button class="btn-copy" onclick="copySummaryText()">📋 핵심 결과 한 줄 복사</button>
+      </div>
+      <div class="mc-lines" id="mcLines"></div>
+      <div class="time-rhythm-grid" id="timeRhythmGrid"></div>
+    </section>
+
+    <!-- ② 사주 원국 & 종합 점수 -->
+    <section class="card">
+      <div class="section-title">
+        <span>📜 타고난 사주 기질과 오늘의 총운</span>
+      </div>
+      <div class="summary-grid">
+        <!-- 좌측: 종합 점수 -->
+        <div class="score-box">
+          <span class="user-badge" id="resUserBadge"></span>
+          <div class="score-number" id="resTotalScore"></div>
+          <div class="score-grade" id="resTotalGrade"></div>
+          <p class="score-headline" id="resHeadline"></p>
+          <p class="method-note">운세 점수는 직장 22%·금전 18%·연애 16%·건강 14%·관계 16%·성장 14%의 편집 가중치로 만든 콘텐츠 참고 지표이며, 실제 길흉 확률이 아닙니다.</p>
+          <div class="iljin-badge" id="resIljinRelation"></div>
+        </div>
+
+        <!-- 우측: 사주 4주 표 + 오행 참고 가중치 -->
+        <div>
+          <div class="pillars-grid" id="pillarsGrid"></div>
+          <div class="strength-bar" id="strengthBar"></div>
+          <div class="ohaeng-bars" id="ohaengBars"></div>
+          <p class="method-note">오행 막대는 천간·지지와 지장간을 단순 가중 합산한 참고치이며, 명리학적 오행 강약이나 용신을 확정하는 수치가 아닙니다.</p>
+        </div>
+      </div>
+
+      <!-- 사주 × 연령대 × MBTI 융합 브리핑 -->
+      <div class="fusion-banner">
+        <div class="fusion-banner-title">🧬 타고난 기질 × 연령대 현실 × MBTI 성향 종합 분석</div>
+        <p id="fusionDesc"></p>
+        <div id="crossAnalysisPanel" class="cross-analysis-panel"></div>
+      </div>
+
+      <!-- 행운 요소 요약 -->
+      <div class="lucky-grid" id="luckyGrid"></div>
+    </section>
+
+    <!-- ③ 8대 분야별 상세 운세 -->
+    <section class="card">
+      <div class="section-title">
+        <span id="catSectionHeader">🧭 8대 분야별 맞춤 해설</span>
+        <button class="view-mode-btn" id="viewModeBtn" onclick="toggleViewMode()">📖 8대 분야 한눈에 펼쳐보기</button>
+      </div>
+
+      <div class="tabs-wrap" id="categoryTabs"></div>
+
+      <div id="singleCategoryContainer"></div>
+      <div id="allCategoriesContainer" style="display:none;"></div>
+    </section>
+
+    <!-- ④ 스페셜 운명 카드 -->
+    <section class="card">
+      <div class="section-title">
+        <span>🃏 오늘의 스페셜 운명 조언 카드 (1장을 터치해 뒤집어 보세요)</span>
+      </div>
+      <div class="tarot-grid" id="tarotGrid"></div>
+    </section>
+  </div>
+
+  <footer>
+    출생시간은 선택한 2시간 구간의 대표 시각으로 계산합니다. 출생지 경도에 따른 진태양시 보정은 하지 않으며, 자시(23시 전후) 날짜 적용 방식은 학파별 차이가 있습니다. 본 결과는 전통 명리 해석을 참고한 오락·자기성찰 콘텐츠입니다. 절입 시각과 출생지 진태양시를 정밀 보정한 만세력 또는 검증된 용신 판정이 아니며, MBTI와 사주의 결합은 성격·운명을 과학적으로 입증하는 진단이 아닙니다. 점수와 조언은 참고용입니다.
+  </footer>
+</div>
+
+<script>
+/* =========================================================
+   1. 효과음 신디사이저 (Web Audio API)
+   ========================================================= */
+let soundEnabled = true;
+let audioCtx = null;
+
+function playTone(type) {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if (type === 'reveal') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    } else if (type === 'tab') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(620, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      osc.start(now);
+      osc.stop(now + 0.1);
+    } else if (type === 'card') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.3);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    }
+  } catch (e) {}
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById('soundBtn').textContent = soundEnabled ? '🔊 효과음 ON' : '🔇 효과음 OFF';
+}
+
+/* =========================================================
+   2. 음력 -> 양력 변환 비트 테이블 (1940년 ~ 2030년; 기준 데이터 별도 검증 필요)
+   ========================================================= */
+const LUNAR_INFO = [
+  0x06aa0,0x0ad50,0x055d2,0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0, // 1940-1949
+  0x0ada2,0x095b0,0x14977,0x04970,0x0a4b0,0x1b4b5,0x06a50,0x06d40,0x1ab54,0x02b60, // 1950-1959
+  0x09570,0x052f2,0x04970,0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3, // 1960-1969
+  0x092e0,0x1c8d7,0x0c950,0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0, // 1970-1979
+  0x0d2b2,0x0a950,0x0b557,0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0, // 1980-1989
+  0x0a9a8,0x0e950,0x06aa0,0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263, // 1990-1999
+  0x0d950,0x05b57,0x056a0,0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558, // 2000-2009
+  0x0b540,0x0b6a0,0x195a6,0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40, // 2010-2019
+  0x0af46,0x0ab60,0x09570,0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x05ac0, // 2020-2029
+  0x0ab60 // 2030
+];
+
+function lunarToSolar(lYear, lMonth, lDay, isLeap) {
+  if (lYear < 1940 || lYear > 2030) throw new Error("음력 변환 지원 범위를 벗어났습니다.");
+  let offset = 0;
+  for (let y = 1940; y < lYear; y++) {
+    offset += getLunarYearDays(y);
+  }
+  const leapMonth = getLunarLeapMonth(lYear);
+  for (let m = 1; m < lMonth; m++) {
+    offset += getLunarMonthDays(lYear, m);
+    if (leapMonth > 0 && m === leapMonth) {
+      offset += getLunarLeapDays(lYear);
+    }
+  }
+  if (isLeap && leapMonth === lMonth) {
+    offset += getLunarMonthDays(lYear, lMonth);
+  }
+  offset += lDay - 1;
+  // 1940년 음력 1월 1일은 양력 1940년 2월 8일
+  const baseDate = new Date(Date.UTC(1940, 1, 8));
+  baseDate.setUTCDate(baseDate.getUTCDate() + offset);
+  return {
+    y: baseDate.getUTCFullYear(),
+    m: baseDate.getUTCMonth() + 1,
+    d: baseDate.getUTCDate()
+  };
+}
+
+function getLunarYearDays(y) {
+  let sum = 348;
+  const info = LUNAR_INFO[y - 1940];
+  for (let i = 0x8000; i > 0x8; i >>= 1) {
+    sum += (info & i) ? 1 : 0;
+  }
+  return sum + getLunarLeapDays(y);
+}
+
+function getLunarLeapMonth(y) {
+  return LUNAR_INFO[y - 1940] & 0xf;
+}
+
+function getLunarLeapDays(y) {
+  if (getLunarLeapMonth(y)) {
+    return (LUNAR_INFO[y - 1940] & 0x10000) ? 30 : 29;
+  }
+  return 0;
+}
+
+function getLunarMonthDays(y, m) {
+  return (LUNAR_INFO[y - 1940] & (0x10000 >> m)) ? 30 : 29;
+}
+
+/* =========================================================
+   3. 사주 기초 계산 엔진 (근사 절기·오행 참고치; 정밀 만세력 대체 불가)
+   ========================================================= */
+const STEMS = ['갑','을','병','정','무','기','경','신','임','계'];
+const STEMS_HANJA = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const STEM_EL = ['wood','wood','fire','fire','earth','earth','metal','metal','water','water'];
+const STEM_YY = [1,0,1,0,1,0,1,0,1,0];
+const STEM_COLOR_KR = ['푸른','푸른','붉은','붉은','황금','황금','하얀','하얀','검은','검은'];
+
+// 한자어 대신 직관적인 자연물 기질 설명
+const STEM_NATURE_DESC = [
+  '🌲 곧게 뻗어 나가는 큰 나무(갑목) 기질 — 리더십과 추진력이 뛰어남',
+  '🌿 바람에도 꺾이지 않는 유연한 화초(을목) 기질 — 적응력과 끈기가 강함',
+  '☀️ 세상을 환하게 비추는 밝은 태양(병화) 기질 — 열정적이고 뒤끝이 없음',
+  '🕯️ 어둠을 밝히는 따뜻한 촛불(정화) 기질 — 섬세하고 집중력이 깊음',
+  '⛰️ 묵직하게 중심을 잡는 넓은 대지(무토) 기질 — 믿음직하고 포용력이 큼',
+  '🌾 알곡을 길러내는 비옥한 정원(기토) 기질 — 실속 있고 주변을 잘 챙김',
+  '⚔️ 단단하고 결단력 있는 무쇠 원석(경금) 기질 — 의리가 있고 맺고 끊음이 확실함',
+  '💎 정교하게 다듬어진 빛나는 보석(신금) 기질 — 감각이 예리하고 완성도를 추구함',
+  '🌊 모든 것을 품어주는 넓은 바다(임수) 기질 — 지혜롭고 스케일이 큼',
+  '💧 대지를 촉촉이 적시는 봄비(계수) 기질 — 총명하고 스며드는 친화력이 좋음'
+];
+
+const BRANCHES = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const BRANCHES_HANJA = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const BRANCH_EL = ['water','earth','wood','wood','earth','fire','fire','earth','metal','metal','earth','water'];
+const BRANCH_YY = [1,0,1,0,1,0,1,0,1,0,1,0];
+const BRANCH_ANIMAL = ['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
+const BRANCH_EMOJI  = ['🐭','🐮','🐯','🐰','🐲','🐍','🐴','🐑','🐵','🐔','🐶','🐷'];
+
+const EL_ORDER = ['wood','fire','earth','metal','water'];
+const EL_INFO = {
+  wood:  { kr: '나무(木)', easy: '성장·기획 에너지', color: '#22c55e', cls: 'el-wood', supplement: '아침 스트레칭과 가벼운 산책, 초록색 소품 가까이하기, 오늘 할 일 3가지 적기' },
+  fire:  { kr: '불(火)',   easy: '열정·표현 에너지', color: '#ef4444', cls: 'el-fire', supplement: '작업 공간 조명 밝게 켜기, 반갑게 먼저 인사 건네기, 따뜻한 음료 마시기' },
+  earth: { kr: '흙(土)',   easy: '안정·신뢰 에너지', color: '#eab308', cls: 'el-earth', supplement: '규칙적인 식사 챙기기, 책상 위 깔끔하게 정돈하기, 깊은 호흡으로 여유 찾기' },
+  metal: { kr: '금속(金)', easy: '결단·마무리 에너지', color: '#e2e8f0', cls: 'el-metal', supplement: '우선순위 확실히 줄이기, 불필요한 지출 막기, 마감 시간 명확히 정하기' },
+  water: { kr: '물(水)',   easy: '지혜·휴식 에너지', color: '#3b82f6', cls: 'el-water', supplement: '미온수 자주 마시기, 15분간 조용히 생각 정리하기, 플랜B 유연하게 열어두기' }
+};
+
+// 어려운 십성 용어를 직관적인 일상어로 매핑
+const TENGOD_EASY_NAME = {
+  '비견': '소신·독립심',
+  '겁재': '승부욕·돌파력',
+  '식신': '재능발휘·먹을복',
+  '상관': '아이디어·언변',
+  '편재': '활동확장·기회포착',
+  '정재': '안정수익·성실함',
+  '편관': '책임감·문제해결',
+  '정관': '명예·인정받음',
+  '편인': '직관력·창의성',
+  '정인': '도움받음·문서운'
+};
+
+function getGanjiAnimalNickname(stemIdx, branchIdx) {
+  return `${BRANCH_EMOJI[branchIdx]} ${STEM_COLOR_KR[stemIdx]} ${BRANCH_ANIMAL[branchIdx]}`;
+}
+
+function getJDN(y, m, d) {
+  const a = Math.floor((14 - m) / 12);
+  const y1 = y + 4800 - a;
+  const m1 = m + 12 * a - 3;
+  return d + Math.floor((153 * m1 + 2) / 5) + 365 * y1 + Math.floor(y1 / 4) - Math.floor(y1 / 100) + Math.floor(y1 / 400) - 32045;
+}
+
+function getSolarLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525.0;
+  let L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+  let M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
+  M = M * Math.PI / 180;
+  const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M)
+          + (0.019993 - 0.000101 * T) * Math.sin(2 * M)
+          + 0.000289 * Math.sin(3 * M);
+  let sunLon = (L0 + C) % 360;
+  if (sunLon < 0) sunLon += 360;
+  return sunLon;
+}
+
+function getTenGod(dayStemIdx, targetEl, targetYY) {
+  const dayEl = STEM_EL[dayStemIdx];
+  const dayYY = STEM_YY[dayStemIdx];
+  const sameYY = (dayYY === targetYY);
+  const dIdx = EL_ORDER.indexOf(dayEl);
+  const tIdx = EL_ORDER.indexOf(targetEl);
+  const diff = (tIdx - dIdx + 5) % 5;
+
+  if (diff === 0) return sameYY ? '비견' : '겁재';
+  if (diff === 1) return sameYY ? '식신' : '상관';
+  if (diff === 2) return sameYY ? '편재' : '정재';
+  if (diff === 3) return sameYY ? '편관' : '정관';
+  return sameYY ? '편인' : '정인';
+}
+
+// 합·충·형 관계를 한자어 없이 쉬운 우리말로 판별
+function analyzeInteractionsEasy(userDayStem, userDayBranch, userMonthBranch, todayStem, todayBranch, natalBranches = null, natalStems = null) {
+  const natalBranchList = [...new Set((natalBranches && natalBranches.length ? natalBranches : [userDayBranch, userMonthBranch]).filter(Number.isInteger))];
+  const natalStemList = [...new Set((natalStems && natalStems.length ? natalStems : [userDayStem]).filter(Number.isInteger))];
+  const easyNotes = [];
+  let scoreMod = 0;
+  let workMod = 0, moneyMod = 0, loveMod = 0, healthMod = 0, socialMod = 0;
+
+  if (natalStemList.some(stem => Math.abs(stem - todayStem) === 5)) {
+    easyNotes.push('생각과 마음이 자연스럽게 통하는 날');
+    scoreMod += 5; loveMod += 8; socialMod += 6;
+  }
+
+  const yukHap = [[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];
+  for (const [a, b] of yukHap) {
+    if (natalBranchList.some(branch => (branch === a && todayBranch === b) || (branch === b && todayBranch === a))) {
+      easyNotes.push('내 기질과 오늘의 흐름이 찰떡처럼 맞물리는 날');
+      scoreMod += 6; loveMod += 9; moneyMod += 5; socialMod += 7;
+    }
+  }
+
+  const samHapGroups = [[2,6,10],[5,9,1],[8,0,4],[11,3,7]];
+  for (const grp of samHapGroups) {
+    if (natalBranchList.some(branch => grp.includes(branch) && grp.includes(todayBranch) && branch !== todayBranch)) {
+      easyNotes.push('주변 사람들과 손발이 잘 맞고 협력이 잘 되는 날');
+      scoreMod += 4; workMod += 7; socialMod += 6;
+    }
+  }
+
+  const chung = [[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]];
+  for (const [a, b] of chung) {
+    if (natalBranchList.some(branch => (branch === a && todayBranch === b) || (branch === b && todayBranch === a))) {
+      easyNotes.push('익숙한 일상에 새로운 변화나 깜짝 변수가 생기기 쉬운 날');
+      scoreMod -= 6; loveMod -= 9; healthMod -= 7; socialMod -= 5;
+    }
+  }
+
+  const hyungGroups = [[2,5,8],[1,10,7]];
+  for (const grp of hyungGroups) {
+    if (natalBranchList.some(branch => grp.includes(branch) && grp.includes(todayBranch) && branch !== todayBranch)) {
+      easyNotes.push('꼼꼼하게 따져보고 성급한 결정만 피하면 좋은 날');
+      scoreMod -= 4; workMod -= 4; healthMod -= 5;
+    }
+  }
+
+  const wonjin = [[0,7],[1,6],[2,9],[3,8],[4,11],[5,10]];
+  for (const [a, b] of wonjin) {
+    if (natalBranchList.some(branch => (branch === a && todayBranch === b) || (branch === b && todayBranch === a))) {
+      easyNotes.push('사소한 말투에 마음이 살짝 예민해질 수 있어 여유가 필요한 날');
+      loveMod -= 6; socialMod -= 5;
+    }
+  }
+
+  if (easyNotes.length === 0) {
+    easyNotes.push('큰 흔들림 없이 내 페이스대로 편안하게 나아가는 날');
+    scoreMod += 2;
+  }
+
+  return {
+    summary: easyNotes.join(' · '),
+    hasConflict: scoreMod < 0 || loveMod < -4,
+    hasHarmony: scoreMod >= 4,
+    mods: { total: scoreMod, work: workMod, money: moneyMod, love: loveMod, health: healthMod, social: socialMod }
+  };
+}
+
+// 지지에 포함된 지장간. 단순 개수 대신 가중 참고치 계산에 사용한다.
+const HIDDEN_STEMS = {
+  0:[9], 1:[5,9,7], 2:[0,2,4], 3:[1], 4:[4,1,9], 5:[2,4,6],
+  6:[3,5], 7:[5,3,1], 8:[6,8,4], 9:[7], 10:[4,7,3], 11:[8,0]
+};
+const BRANCH_MAIN_WEIGHT = 1.0;
+const HIDDEN_STEM_WEIGHT = 0.35;
+
+function isValidDate(y, m, d) {
+  if (!Number.isInteger(y) || !Number.isInteger(m) || !Number.isInteger(d)) return false;
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+
+function getExactAge(y, m, d, atDate) {
+  let age = atDate.getFullYear() - y;
+  const birthdayNotReached = (atDate.getMonth() + 1 < m) ||
+    (atDate.getMonth() + 1 === m && atDate.getDate() < d);
+  if (birthdayNotReached) age--;
+  return age;
+}
+
+function getCrossAnalysis(saju, mbti) {
+  const profile = MBTI_DATA[mbti];
+  const axes = {
+    E: mbti[0] === 'E' ? '외부 자극·대화로 에너지를 얻는 경향' : '혼자 생각을 정리하며 에너지를 회복하는 경향',
+    N: mbti[1] === 'N' ? '가능성과 큰 그림을 먼저 보는 경향' : '구체적 사실과 경험을 먼저 확인하는 경향',
+    T: mbti[2] === 'T' ? '논리와 일관성을 중심으로 판단하는 경향' : '가치와 사람에게 미치는 영향을 중심으로 판단하는 경향',
+    J: mbti[3] === 'J' ? '계획과 마감이 정해졌을 때 편안한 경향' : '선택지를 열어두고 상황에 맞춰 조정하는 경향'
+  };
+  const element = STEM_EL[saju.day.stem];
+  const elementText = EL_INFO[element].easy;
+  const natural = STEM_NATURE_DESC[saju.day.stem];
+  const tension = [];
+  const advice = [];
+  // 서로 다른 체계를 등치하지 않고, 실제 행동에서 점검할 질문으로 연결한다.
+  if (element === 'wood' && mbti[3] === 'P') {
+    tension.push('확장하고 싶은 마음과 선택지를 열어두려는 경향이 겹치면 시작은 많고 마무리는 늦어질 수 있습니다.');
+    advice.push('오늘은 새 계획을 추가하기보다 진행 중인 일 하나를 완료 기준까지 마무리하세요.');
+  } else if (element === 'wood' && mbti[3] === 'J') {
+    tension.push('성장과 추진을 중시하는 기질을 계획적으로 실행할 때 성과가 나기 쉽지만, 계획 변경을 지나치게 부담스러워하지 않는 것이 좋습니다.');
+    advice.push('핵심 일정 하나는 고정하고 나머지에는 여유 시간을 남겨두세요.');
+  }
+  if (element === 'fire' && mbti[2] === 'T') {
+    tension.push('표현과 속도를 중시하는 기질에 논리적 판단이 더해지면 설득력은 높아질 수 있지만, 전달 방식이 차갑게 느껴지지 않는지 점검할 필요가 있습니다.');
+    advice.push('결론을 말하기 전에 상대가 중요하게 여기는 기준을 한 번 확인하세요.');
+  } else if (element === 'fire' && mbti[2] === 'F') {
+    tension.push('표현력과 관계의 의미를 함께 중시할 수 있어 공감과 전달력이 강점이 될 수 있습니다. 다만 타인의 반응에 에너지를 과하게 쓰지 않도록 하세요.');
+    advice.push('상대의 감정과 내 책임의 경계를 구분해 보세요.');
+  }
+  if (element === 'earth' && mbti[1] === 'N') {
+    tension.push('안정과 현실성을 중시하는 상징에 가능성 중심의 사고가 더해져 구상을 현실로 옮기는 연결이 중요합니다.');
+    advice.push('아이디어를 예산·일정·첫 단계 세 항목으로 바꿔 적으세요.');
+  } else if (element === 'earth' && mbti[1] === 'S') {
+    tension.push('현실적인 기준과 구체적 경험을 함께 활용하면 실행의 안정성이 강점이 될 수 있습니다. 익숙함만 고집하지 않는 것이 관건입니다.');
+    advice.push('검증된 방식에 작은 실험 하나를 더해 보세요.');
+  }
+  if (element === 'metal' && mbti[0] === 'E') {
+    tension.push('결단과 기준을 분명히 하는 상징에 외부 소통 성향이 더해지면 추진력이 커질 수 있지만, 빠른 피드백이 성급한 결론으로 이어지지 않게 하세요.');
+    advice.push('중요한 답변은 보내기 전 핵심 조건을 한 번 더 확인하세요.');
+  } else if (element === 'metal' && mbti[0] === 'I') {
+    tension.push('기준을 세우고 혼자 정리하는 방식이 강점이 될 수 있지만, 필요한 도움 요청까지 미루지 않도록 주의하세요.');
+    advice.push('혼자 검토한 뒤 신뢰하는 사람 한 명에게 의견을 물어보세요.');
+  }
+  if (element === 'water' && mbti[3] === 'P') {
+    tension.push('관찰과 유연성을 함께 활용할 수 있지만, 생각이 길어져 결정 시점을 놓치지 않도록 기준을 정하는 편이 좋습니다.');
+    advice.push('결정 가능한 정보가 모이면 작은 규모로 먼저 실행하세요.');
+  } else if (element === 'water' && mbti[3] === 'J') {
+    tension.push('깊이 생각하고 계획하는 강점을 살리되, 예상 밖의 변수가 생겼을 때 계획을 수정하는 여지를 남겨두세요.');
+    advice.push('계획에 대안 한 가지와 수정 가능한 시점을 함께 적으세요.');
+  }
+  if (!tension.length) {
+    tension.push('현재 사주 상징과 MBTI 선호 사이에 특정한 충돌을 단정할 근거는 없습니다. 두 정보는 서로 다른 관점으로 참고하는 것이 적절합니다.');
+    advice.push(profile.tip);
+  }
+  return {
+    profile, axes, natural, elementText,
+    harmony: `${natural}이라는 명리학적 상징과 ${profile.title}의 행동 선호를 나란히 참고하면, ${profile.strength}을 활용하는 방법을 구체화할 수 있습니다.`,
+    tension: tension.join(' '),
+    advice: [...advice, profile.tip].filter((v,i,a)=>a.indexOf(v)===i).join(' ')
+  };
+}
+
+function calculateSaju(y, m, d, hour, minute, unknownTime) {
+  let baseJdn = getJDN(y, m, d);
+  const jdExact = baseJdn - 0.5 + ((hour - 9) + minute / 60) / 24;
+  const sunLon = getSolarLongitude(jdExact);
+
+  let sajuYear = y;
+  if (m === 1 || (m === 2 && sunLon < 315)) {
+    sajuYear = y - 1;
+  }
+  const yearStem = (sajuYear - 4 + 6000) % 10;
+  const yearBranch = (sajuYear - 4 + 6000) % 12;
+
+  const shiftedLon = (sunLon - 315 + 360) % 360;
+  const monthIndex = Math.floor(shiftedLon / 30);
+  const monthBranch = (monthIndex + 2) % 12;
+  const startMonthStem = ((yearStem % 5) * 2 + 2) % 10;
+  const monthStem = (startMonthStem + monthIndex) % 10;
+
+  let dayJdn = baseJdn;
+  let timeStem = null, timeBranch = null;
+
+  if (!unknownTime) {
+    // 선택한 시간대(예: 00:00 자시 ~ 22:00 해시)
+    timeBranch = Math.floor(((hour + 1) % 24) / 2);
+  }
+
+  const dayIdx60 = (dayJdn + 49) % 60;
+  const dayStem = dayIdx60 % 10;
+  const dayBranch = dayIdx60 % 12;
+
+  if (!unknownTime) {
+    timeStem = ((dayStem % 5) * 2 + timeBranch) % 10;
+  }
+
+  const visibleCounts = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+  [yearStem, monthStem, dayStem].forEach(s => visibleCounts[STEM_EL[s]]++);
+  [yearBranch, monthBranch, dayBranch].forEach(b => visibleCounts[BRANCH_EL[b]]++);
+  if (!unknownTime) {
+    visibleCounts[STEM_EL[timeStem]]++;
+    visibleCounts[BRANCH_EL[timeBranch]]++;
+  }
+  const elementScores = { ...visibleCounts };
+  const branchesForHidden = [yearBranch, monthBranch, dayBranch];
+  if (!unknownTime) branchesForHidden.push(timeBranch);
+  branchesForHidden.forEach(branch => {
+    (HIDDEN_STEMS[branch] || []).forEach(stem => {
+      elementScores[STEM_EL[stem]] += HIDDEN_STEM_WEIGHT;
+    });
+  });
+  const counts = elementScores; // 기존 화면·콘텐츠 호환용: 지장간을 반영한 참고 가중치
+
+  const dayEl = STEM_EL[dayStem];
+  const dayElIdx = EL_ORDER.indexOf(dayEl);
+  const inseongEl = EL_ORDER[(dayElIdx + 4) % 5];
+  const siksangEl = EL_ORDER[(dayElIdx + 1) % 5];
+  const jaeseongEl = EL_ORDER[(dayElIdx + 2) % 5];
+  const gwanseongEl = EL_ORDER[(dayElIdx + 3) % 5];
+
+  const isSupport = (el) => (el === dayEl || el === inseongEl);
+
+  let powerScore = 0;
+  if (isSupport(BRANCH_EL[monthBranch])) powerScore += 36;
+  if (isSupport(BRANCH_EL[dayBranch]))   powerScore += 20;
+  if (isSupport(STEM_EL[monthStem]))     powerScore += 12;
+  if (isSupport(STEM_EL[yearStem]))      powerScore += 8;
+  if (isSupport(BRANCH_EL[yearBranch]))  powerScore += 8;
+  if (!unknownTime) {
+    if (isSupport(STEM_EL[timeStem]))     powerScore += 8;
+    if (isSupport(BRANCH_EL[timeBranch])) powerScore += 8;
+  } else {
+    powerScore = Math.round(powerScore * (100 / 84));
+  }
+
+  let strengthEasy = '';
+  let yongsinEl = siksangEl;
+  let yongsinReason = '';
+
+  if (powerScore >= 56) {
+    strengthEasy = `일간 지원 참고지표 ${powerScore}/100 (정밀 신강·신약 판정 아님)`;
+    const candidates = [siksangEl, jaeseongEl, gwanseongEl];
+    yongsinEl = candidates.reduce((a, b) => counts[a] <= counts[b] ? a : b);
+    yongsinReason = `단순 참고 지표상 일간을 돕는 요소가 비교적 많으므로, 균형을 살피는 관점에서 [${EL_INFO[yongsinEl].kr} — ${EL_INFO[yongsinEl].easy}] 기운을 채울 때 일이 가장 잘 풀립니다.`;
+  } else if (powerScore <= 44) {
+    strengthEasy = `일간 지원 참고지표 ${powerScore}/100 (정밀 신강·신약 판정 아님)`;
+    yongsinEl = counts[inseongEl] <= counts[dayEl] ? inseongEl : dayEl;
+    yongsinReason = `단순 참고 지표상 일간을 돕는 요소가 비교적 적으므로, 자기 관리와 기반을 점검하는 관점에서 [${EL_INFO[yongsinEl].kr} — ${EL_INFO[yongsinEl].easy}] 기운을 보충할 때 행운이 커집니다.`;
+  } else {
+    strengthEasy = `일간 지원 참고지표 ${powerScore}/100 (정밀 신강·신약 판정 아님)`;
+    yongsinEl = EL_ORDER.reduce((a, b) => counts[a] <= counts[b] ? a : b);
+    yongsinReason = `단순 참고 지표가 중간 범위에 있으므로, 상대적으로 낮게 나타난 [${EL_INFO[yongsinEl].kr} — ${EL_INFO[yongsinEl].easy}] 기운만 살짝 더해지면 만사가 순조로워집니다.`;
+  }
+
+  const maxEl = EL_ORDER.reduce((a, b) => counts[a] >= counts[b] ? a : b);
+
+  return {
+    year:  { stem: yearStem, branch: yearBranch, tenStem: TENGOD_EASY_NAME[getTenGod(dayStem, STEM_EL[yearStem], STEM_YY[yearStem])], animal: getGanjiAnimalNickname(yearStem, yearBranch) },
+    month: { stem: monthStem, branch: monthBranch, tenStem: TENGOD_EASY_NAME[getTenGod(dayStem, STEM_EL[monthStem], STEM_YY[monthStem])], animal: getGanjiAnimalNickname(monthStem, monthBranch) },
+    day:   { stem: dayStem, branch: dayBranch, tenStem: '나의 중심 기질', animal: getGanjiAnimalNickname(dayStem, dayBranch) },
+    time:  unknownTime ? null : { stem: timeStem, branch: timeBranch, tenStem: TENGOD_EASY_NAME[getTenGod(dayStem, STEM_EL[timeStem], STEM_YY[timeStem])], animal: getGanjiAnimalNickname(timeStem, timeBranch) },
+    counts,
+    strengthEasy,
+    powerScore,
+    yongsinEl,
+    yongsinReason,
+    maxEl
+  };
+}
+
+/* =========================================================
+   4. 연령대별(10대~50대+) 현실 상황 맞춤 데이터베이스
+   ========================================================= */
+function getAgeGroupInfo(age) {
+  if (age < 20) {
+    return {
+      groupKey: '10s',
+      badge: `${age}세 · 10대 학업·진로기`,
+      workTabName: '🏫 학업·진로운',
+      workTitle: '🏫 학교생활 · 성적 · 진로 탐색운',
+      moneyTabName: '🪙 용돈·소비운',
+      moneyTitle: '🪙 용돈 관리 · 쇼핑 · 알짜 소비운',
+      loveTabName: '💓 교우·설렘운',
+      loveTitle: '💓 짝사랑 · 이성 친구 · 인기운',
+      socialTitle: '🤝 학교 친구 · 동아리 · 선후배 관계운',
+      studyTitle: '📝 시험 집중력 · 암기 · 성적 향상운',
+      workContext: '수업 집중도와 수행평가, 진로 고민이나 동아리 활동에서',
+      moneyContext: '용돈이나 기프티콘, 취미 용품 구매 등 일상 소비에서',
+      loveContext: '학교나 학원, SNS에서 호감 있는 친구와의 거리 좁히기에서',
+      socialContext: '단짝 친구나 반 친구들, 선후배들과 어울리는 자리에서',
+      studyContext: '시험공부나 어학·자격증, 나만의 특기를 기르는 과정에서'
+    };
+  } else if (age < 30) {
+    return {
+      groupKey: '20s',
+      badge: `${age}세 · 20대 도약·청춘기`,
+      workTabName: '💼 취업·커리어',
+      workTitle: '💼 취업 · 직장 적응 · 크리에이터 활동운',
+      moneyTabName: '💰 종잣돈·재물',
+      moneyTitle: '💰 알바 · 월급 관리 · 종잣돈 모으기운',
+      loveTabName: '💖 연애·썸·매력',
+      loveTitle: '💖 썸 · 연애 · 새로운 만남과 매력운',
+      socialTitle: '🤝 인맥 확장 · 동기 · 멘토 소통운',
+      studyTitle: '📚 자격증 · 포트폴리오 · 자기계발운',
+      workContext: '취업 준비, 이직, 직장 실무나 개인 방송·콘텐츠 제작 현장에서',
+      moneyContext: '월급·수익 관리와 첫 종잣돈 모으기, 소소한 재테크에서',
+      loveContext: '설레는 썸이나 소개팅, 연인과의 데이트 호흡에서',
+      socialContext: '새로운 모임이나 직장 동료, 활동 커뮤니티의 인간관계에서',
+      studyContext: '스펙 업그레이드, 기술 습득, 창작 아이디어 구상에서'
+    };
+  } else if (age < 40) {
+    return {
+      groupKey: '30s',
+      badge: `${age}세 · 30대 핵심성취기`,
+      workTabName: '🚀 직장·사업운',
+      workTitle: '🚀 직장 내 핵심 성과 · 이직 · 사업 확장운',
+      moneyTabName: '💰 재테크·자산',
+      moneyTitle: '💰 본격 자산 증식 · 투자 · 내집마련운',
+      loveTabName: '💖 연애·결혼운',
+      loveTitle: '💖 진지한 연애 · 결혼 · 배우자 화합운',
+      socialTitle: '🤝 비즈니스 파트너 · 핵심 인맥 · 귀인운',
+      studyTitle: '📚 전문성 심화 · 부업 연구 · 커리어 확장운',
+      workContext: '조직 내 핵심 프로젝트 리딩, 몸값 높이기, 개인 사업 및 방송 운영에서',
+      moneyContext: '자산 증식, 투자 포트폴리오 관리, 목돈 운용과 지출 방어에서',
+      loveContext: '결혼을 전제로 한 진지한 만남이나 배우자·연인과의 깊은 신뢰에서',
+      socialContext: '일적으로 얽힌 파트너, 상사·후배 및 꼭 챙겨야 할 지인 관계에서',
+      studyContext: '대체 불가능한 전문 기술 확보와 새로운 수익 파이프라인 연구에서'
+    };
+  } else {
+    return {
+      groupKey: age < 50 ? '40s' : '50plus',
+      badge: `${age}세 · ${age < 50 ? '40대' : '50대+'} 안정·결실기`,
+      workTabName: '👑 사업·명예운',
+      workTitle: '👑 사회적 입지 · 사업 안정 · 리더십 발휘운',
+      moneyTabName: '🏦 자산수성·재물',
+      moneyTitle: '🏦 자산 방어 · 현금흐름 · 노후 재물운',
+      loveTabName: '🏡 가정·부부운',
+      loveTitle: '🏡 부부 금슬 · 가족 화목 · 정서적 동반자운',
+      socialTitle: '🤝 사회적 신망 · 오랜 지인 · 귀인 교류운',
+      studyTitle: '📚 인생 2막 설계 · 취미 심화 · 지혜 확장운',
+      workContext: '그동안 쌓아온 경력과 노하우를 바탕으로 한 의사결정과 입지 관리에서',
+      moneyContext: '무리한 모험보다 자산을 안전하게 지키고 현금 흐름을 탄탄히 하는 데서',
+      loveContext: '배우자 및 가족과의 따뜻한 대화, 오랜 동반자와의 정서적 안정에서',
+      socialContext: '오랜 세월 검증된 지인들과의 교류 및 후배·주변 사람들을 이끄는 자리에서',
+      studyContext: '새로운 트렌드 습득이나 삶을 풍요롭게 만드는 깊이 있는 취미·공부에서'
+    };
+  }
+}
+
+/* =========================================================
+   5. MBTI 데이터 & 쉬운 십성별 해설 풀
+   ========================================================= */
+const MBTI_DATA = {
+  ENFP: { title: '열정 스파크(ENFP)', strength: '반짝이는 아이디어와 사람을 끌어당기는 밝은 에너지', caution: '하고 싶은 게 너무 많아 한꺼번에 벌여놓고 마무리가 늦어지는 점', tip: '떠오른 생각 중 오늘 당장 끝낼 수 있는 가장 재밌는 일 1가지만 먼저 매듭지으세요.' },
+  ENFJ: { title: '따뜻한 리더(ENFJ)', strength: '주변 사람의 마음을 잘 읽고 분위기를 하나로 모으는 힘', caution: '남을 먼저 배려하느라 정작 내 피로와 실속을 뒤로 미루는 점', tip: '좋은 사람으로 남는 것만큼 내 몫과 휴식 시간을 명확히 챙기는 것이 행운을 부릅니다.' },
+  ENTP: { title: '아이디어 혁신가(ENTP)', strength: '막힌 문제도 남다른 발상 전환으로 유쾌하게 뚫어내는 돌파력', caution: '반복되는 일상 업무에 쉽게 지루해하고 말싸움에 에너지를 쓰는 점', tip: '새로운 판을 벌이기보다 이미 시작해 둔 일의 완성도를 10%만 더 끌어올려 보세요.' },
+  ENTJ: { title: '대담한 지휘관(ENTJ)', strength: '목표를 정하면 망설임 없이 최단 거리로 밀고 나가는 결단력', caution: '효율과 결과만 챙기다 주변 사람들의 감정 속도를 놓칠 수 있는 점', tip: '정확한 지시 뒤에 따뜻한 격려 한마디만 덧붙이면 완벽한 내 편이 늘어납니다.' },
+  ESFP: { title: '자유로운 스타(ESFP)', strength: '어딜 가나 분위기를 띄우는 순발력과 긍정적인 현장 감각', caution: '당장의 기분과 즐거움에 끌려 계획에 없던 지출이나 일정 변경을 하는 점', tip: '즐거운 제안이 들어와도 오늘 정해둔 예산과 핵심 할 일을 먼저 체크하세요.' },
+  ESFJ: { title: '다정한 외교관(ESFJ)', strength: '약속을 소중히 여기고 주변을 살뜰히 챙기는 든든한 책임감', caution: '부탁을 거절하지 못해 혼자 할 일을 떠안거나 남의 말에 신경 쓰는 점', tip: '모든 사람을 다 만족시킬 수는 없으니 내 컨디션을 지키는 선에서 부드럽게 거절하세요.' },
+  ESTP: { title: '실전형 해결사(ESTP)', strength: '복잡한 이론보다 현장에서 바로 부딪치며 기회를 낚아채는 감각', caution: '속도는 빠르지만 세부 계약 조건이나 뒷정리를 대충 넘기기 쉬운 점', tip: '중요한 결정이나 결제 버튼을 누르기 전에 조건을 딱 3분만 다시 읽어보세요.' },
+  ESTJ: { title: '체계적인 관리자(ESTJ)', strength: '정해진 규칙과 기한을 빈틈없이 지켜내어 결과를 만드는 실행력', caution: '내 기준에 맞지 않는 비효율이나 갑작스러운 변수에 답답함을 느끼는 점', tip: '예상 밖의 상황이 생겨도 "그럴 수 있지" 하고 유연하게 플랜B로 넘어가면 훨씬 편해집니다.' },
+  INFP: { title: '감성 중재자(INFP)', strength: '깊은 공감 능력과 나만의 진정성 있는 스토리·감수성', caution: '머릿속 생각이 너무 깊어져서 현실적인 첫걸음을 자꾸 미루는 점', tip: '완벽하게 준비될 때까지 기다리지 말고 오늘 딱 20분만 가볍게 손을 움직여 시작해 보세요.' },
+  INFJ: { title: '통찰력 선지자(INFJ)', strength: '사람의 진심과 일의 흐름을 조용히 꿰뚫어 보는 깊은 직관력', caution: '완벽주의와 남에 대한 배려가 겹쳐 혼자 속으로 번아웃이 오기 쉬운 점', tip: '100점짜리 결과물이 아니어도 충분히 훌륭하니 80% 수준에서 마음 편히 공유하세요.' },
+  INTP: { title: '논리적 사색가(INTP)', strength: '감정에 휘둘리지 않고 복잡한 문제의 핵심 원리를 찾아내는 지성', caution: '머릿속으로만 분석을 끝내고 실제 행동이나 답장을 미루기 쉬운 점', tip: '좋은 아이디어가 떠올랐다면 생각에만 머물지 말고 메모장이나 주변에 바로 공유하세요.' },
+  INTJ: { title: '용의주도 전략가(INTJ)', strength: '장기적인 큰 그림을 그리고 흔들림 없이 목표를 달성하는 집중력', caution: '내 계획이 워낙 치밀하다 보니 타인의 느린 속도를 답답해할 수 있는 점', tip: '혼자 다 해결하려 하기보다 주변의 작은 의견도 한 번쯤 수용하면 길이 더 넓어집니다.' },
+  ISFP: { title: '온화한 예술가(ISFP)', strength: '부드러운 포용력과 남다른 미적·감각적 디테일로 완성도를 높이는 힘', caution: '갈등이나 싫은 소리가 불편해서 내 속마음을 삼키고 결정을 미루는 점', tip: '원하지 않는 일에는 미소 지으며 부드럽지만 확실하게 내 의사를 표현하세요.' },
+  ISFJ: { title: '든든한 수호자(ISFJ)', strength: '보이지 않는 곳에서도 묵묵하고 꼼꼼하게 제 몫을 해내는 최고의 신뢰감', caution: '익숙한 방식을 벗어나는 변화에 걱정이 앞서고 남의 짐까지 대신 지는 점', tip: '남을 돕기 전에 내 할 일과 휴식을 1순위로 챙겨야 좋은 운이 오래 유지됩니다.' },
+  ISTP: { title: '만능 재주꾼(ISTP)', strength: '군더더기 없이 가장 효율적인 방법으로 문제를 해결하는 실전 기술력', caution: '말수가 적고 표현이 담백해 주변에서 무관심하다고 오해할 수 있는 점', tip: '일 처리는 쿨하게 하더라도 짧은 고마움 표시나 리액션 한마디만 더하면 금상첨화입니다.' },
+  ISTJ: { title: '신뢰의 원칙가(ISTJ)', strength: '한번 맡은 일은 끝까지 정확하게 완수해 내는 흔들림 없는 지속력', caution: '갑작스러운 계획 변경이나 검증 안 된 시도에 스트레스를 받기 쉬운 점', tip: '오늘 하루만큼은 작은 변화나 새로운 방식도 가벼운 실험 삼아 받아들여 보세요.' }
+};
+
+const TENGOD_POOL = {
+  '비견': {
+    vibe: '내 소신과 주도권이 단단해지는 날',
+    mods: { work: 4, money: -4, love: -2, health: 5, social: 2, study: 4 },
+    work: '남의 눈치를 보거나 끌려다니기보다 내 주특기와 원래 세운 방식대로 밀고 나갈 때 가장 좋은 결과가 나옵니다.',
+    money: '내 지갑 관리는 내가 직접 챙겨야 하며, 친구나 지인 따라 기분으로 쓰는 지출이나 더치페이 과소비는 선을 그으세요.',
+    love: '친구처럼 편안하고 솔직한 대화가 잘 통하는 날이지만, 사소한 자존심 대결은 피하고 먼저 웃어넘기는 여유가 필요합니다.'
+  },
+  '겁재': {
+    vibe: '승부욕과 강한 돌파력이 깨어나는 날',
+    mods: { work: 5, money: -12, love: -6, health: 2, social: -5, study: 2 },
+    work: '경쟁이 붙거나 마감 시간이 촉박한 과제에서 오히려 평소보다 몇 배 강한 집중력과 추진력이 폭발합니다.',
+    money: '예정에 없던 돈이 나가거나 충동구매·무리한 투자 유혹이 생기기 쉬운 날이니, 오늘은 지갑을 단단히 잠그는 것이 돈 버는 길입니다.',
+    love: '마음이 급해지거나 상대방의 반응에 예민해질 수 있으니, 재촉하기보다 한 발짝 여유를 두고 다가가세요.'
+  },
+  '식신': {
+    vibe: '타고난 재능이 빛나고 먹을 복이 따르는 날',
+    mods: { work: 7, money: 8, love: 7, health: 6, social: 6, study: 8 },
+    work: '억지로 하기보다 내가 진짜 좋아하고 재미를 느끼는 방식에 몰입할 때 결과물의 퀄리티가 눈에 띄게 올라갑니다.',
+    money: '그동안 성실하게 쌓아온 노력이 실속 있는 수익이나 맛있는 대접, 기분 좋은 보상으로 돌아오는 풍요로운 흐름입니다.',
+    love: '맛있는 음식을 함께 먹거나 편안한 취미를 공유할 때 두 사람 사이의 호감과 다정함이 배로 깊어집니다.'
+  },
+  '상관': {
+    vibe: '기발한 아이디어와 말솜씨가 돋보이는 날',
+    mods: { work: 8, money: 5, love: -4, health: -2, social: -4, study: 7 },
+    work: '남들이 생각지 못한 참신한 기획, 발표, 방송, 디자인 등 내 감각을 표현하는 일에서 단숨에 주목을 받습니다.',
+    money: '새로운 아이디어나 틈새 방식을 통해 수익을 만드는 감각이 살아나지만, 보여주기식 홧김 소비는 줄이세요.',
+    love: '매력과 센스가 넘치는 날이지만, 가까운 사람에게 던진 팩트 폭격이나 날카로운 농담이 오해를 부를 수 있으니 말투만 부드럽게 다듬으세요.'
+  },
+  '편재': {
+    vibe: '활동 무대가 넓어지고 뜻밖의 기회가 오는 날',
+    mods: { work: 7, money: 9, love: 6, health: 1, social: 8, study: 1 },
+    work: '한자리에만 머물기보다 여러 사람과 정보를 연결하고 활동 반경을 넓힐 때 생각지 못한 좋은 찬스를 잡습니다.',
+    money: '돈의 흐름이 활발해지고 뜻밖의 보너스나 수익 기회가 포착되지만, 수익이 났을 때 욕심내지 않고 지키는 기준이 중요합니다.',
+    love: '밝고 유쾌한 에너지가 흘러 새로운 인연을 만나거나 지루했던 관계에 설레는 활력을 불어넣기에 딱 좋은 날입니다.'
+  },
+  '정재': {
+    vibe: '차분한 노력 끝에 확실한 실속을 챙기는 날',
+    mods: { work: 6, money: 10, love: 7, health: 4, social: 5, study: 5 },
+    work: '화려한 요행보다 오늘 해야 할 기본 루틴과 약속을 꼼꼼히 지킬 때 주변으로부터 가장 확실한 신뢰를 얻습니다.',
+    money: '새어 나가는 돈을 막고 정직한 땀방울의 대가를 차곡차곡 통장에 쌓기에 최고로 좋은 알짜 금전운입니다.',
+    love: '화려한 이벤트보다 변함없고 진실한 태도가 상대방에게 큰 안정감과 깊은 믿음을 안겨줍니다.'
+  },
+  '편관': {
+    vibe: '묵직한 책임감과 해결사 능력이 발휘되는 날',
+    mods: { work: 8, money: -3, love: -2, health: -8, social: 3, study: 4 },
+    work: '다소 어렵거나 책임이 무거운 일을 맡을 수 있지만, 이를 정면으로 해결해 내면서 내 실력과 위상이 크게 올라갑니다.',
+    money: '체면치레나 분위기 때문에 나가는 돈을 아끼고, 오늘은 꼭 필요한 지출 외에는 보수적으로 관리하세요.',
+    love: '든든하고 듬직한 매력이 빛나지만, 바쁘고 피곤하다고 해서 상대방에게 무뚝뚝하게 대하지 않도록 다정함을 챙기세요.'
+  },
+  '정관': {
+    vibe: '반듯한 평판과 명예, 인정이 따르는 날',
+    mods: { work: 10, money: 6, love: 8, health: 3, social: 9, study: 7 },
+    work: '시험, 면접, 공식 발표나 윗사람·대중의 평가에서 반듯한 인상을 남기며 실력을 당당하게 인정받습니다.',
+    money: '계획적인 예산 관리와 정석적인 재테크가 빛을 발하며, 신용과 약속을 지키는 것이 곧 금전적 이득으로 연결됩니다.',
+    love: '예의 바르고 반듯한 매력이 돋보여 진지하고 성숙한 대화가 오가며 관계가 한 단계 발전합니다.'
+  },
+  '편인': {
+    vibe: '남다른 직관력과 깊은 통찰이 깨어나는 날',
+    mods: { work: 4, money: -2, love: -3, health: -3, social: -3, study: 10 },
+    work: '남들이 놓치는 디테일이나 전문 기술, 혼자 깊이 몰입하는 기획·창작 작업에서 놀라운 해답을 찾아냅니다.',
+    money: '단기 수익을 쫓기보다 내 실력을 높이는 공부나 장기적인 가치를 지닌 일에 투자할 때 미래 수익이 커집니다.',
+    love: '가벼운 수다보다 깊은 속마음이 통할 때 끌림을 느끼며, 오늘은 혼자만의 재충전 시간도 적당히 챙겨야 편안합니다.'
+  },
+  '정인': {
+    vibe: '든든한 조력자의 도움과 문서의 행운이 따르는 날',
+    mods: { work: 7, money: 6, love: 7, health: 5, social: 8, study: 10 },
+    work: '혼자 끙끙대던 일도 선배나 조언자, 혹은 좋은 자료의 도움을 받아 순조롭고 지혜롭게 풀려나갑니다.',
+    money: '계약, 문서, 자격증, 안전한 자산 확보 등 장기적인 기반을 다지는 일에 매우 따뜻한 행운이 함께합니다.',
+    love: '상대방에게 따뜻하게 이해받고 위로받는 포근한 애정운이 흐르며, 부드러운 경청이 최고의 사랑을 만듭니다.'
+  }
+};
+
+/* =========================================================
+   6. 입력 보조 함수 & 상태 관리
+   ========================================================= */
+let calType = 'solar'; // 'solar', 'lunar', 'leap'
+let targetDayOffset = 0; // 0: 오늘, 1: 내일
+let currentResult = null;
+let activeCategory = 'total';
+let isAllExpanded = false;
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>\"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function hashString(str) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function createPRNG(seedStr) {
+  let a = hashString(seedStr);
+  return function() {
+    let t = a += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// 숫자 8자리 자동 포맷팅 (19980515 -> 1998-05-15) 및 실시간 나이 표시
+function handleBirthInput(el) {
+  let nums = el.value.replace(/[^0-9]/g, '').slice(0, 8);
+  if (nums.length >= 7) {
+    el.value = `${nums.slice(0,4)}-${nums.slice(4,6)}-${nums.slice(6,8)}`;
+  } else if (nums.length >= 5) {
+    el.value = `${nums.slice(0,4)}-${nums.slice(4,6)}`;
+  } else {
+    el.value = nums;
+  }
+
+  const badge = document.getElementById('agePreviewBadge');
+  if (nums.length === 8) {
+    const by = parseInt(nums.slice(0,4), 10);
+    const nowY = new Date().getFullYear();
+    const bm = parseInt(nums.slice(4,6), 10), bd = parseInt(nums.slice(6,8), 10);
+    const age = getExactAge(by, bm, bd, new Date());
+    if (isValidDate(by,bm,bd) && age >= 0 && age <= 120) {
+      const grp = getAgeGroupInfo(age);
+      badge.textContent = `✓ ${grp.badge}`;
+    } else {
+      badge.textContent = '';
+    }
+  } else {
+    badge.textContent = '';
+  }
+}
+
+function setCalType(type) {
+  calType = type;
+  document.getElementById('calSolar').classList.toggle('active', type === 'solar');
+  document.getElementById('calLunar').classList.toggle('active', type === 'lunar');
+  document.getElementById('calLeap').classList.toggle('active', type === 'leap');
+}
+
+function setTargetDayOffset(offset) {
+  playTone('tab');
+  targetDayOffset = offset;
+  document.getElementById('btnToday').classList.toggle('active', offset === 0);
+  document.getElementById('btnTomorrow').classList.toggle('active', offset === 1);
+  updateHeaderDateBanner();
+  if (currentResult) {
+    runFortune();
+  }
+}
+
+function getTargetDateObj() {
+  const d = new Date();
+  if (targetDayOffset === 1) {
+    d.setDate(d.getDate() + 1);
+  }
+  return d;
+}
+
+function updateHeaderDateBanner() {
+  const d = getTargetDateObj();
+  const ts = calculateSaju(d.getFullYear(), d.getMonth() + 1, d.getDate(), 12, 0, false);
+  const animalNick = getGanjiAnimalNickname(ts.day.stem, ts.day.branch);
+  const ganji = `${STEMS[ts.day.stem]}${BRANCHES[ts.day.branch]}(${STEMS_HANJA[ts.day.stem]}${BRANCHES_HANJA[ts.day.branch]})일`;
+  const label = targetDayOffset === 0 ? '오늘' : '내일(미리보기)';
+  document.getElementById('todayInfoText').textContent =
+    `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 [${label}] · 일진: ${ganji} (${animalNick}의 날)`;
+}
+
+function expandInputCard() {
+  document.getElementById('inputCardSection').style.display = 'block';
+  document.getElementById('collapsedInputBar').style.display = 'none';
+  document.getElementById('inputCardSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetForm() {
+  document.getElementById('userName').value = '';
+  document.getElementById('birthInput').value = '';
+  document.getElementById('agePreviewBadge').textContent = '';
+  document.getElementById('birthTimeSlot').value = 'unknown';
+  document.getElementById('userMbti').value = '';
+  setCalType('solar');
+  currentResult = null;
+  document.getElementById('inputCardSection').style.display = 'block';
+  document.getElementById('collapsedInputBar').style.display = 'none';
+  document.getElementById('resultArea').style.display = 'none';
+  document.getElementById('emptyNotice').style.display = 'block';
+}
+
+function clampScore(val) {
+  return Math.min(98, Math.max(55, Math.round(val)));
+}
+
+function getScoreBadgeClass(score) {
+  if (score >= 85) return 'score-high';
+  if (score >= 72) return 'score-mid';
+  return 'score-low';
+}
+
+function getScoreGradeLabel(score) {
+  if (score >= 90) return '🌟 최고 좋음 (대길)';
+  if (score >= 82) return '🌕 아주 좋음 (상길)';
+  if (score >= 72) return '✨ 무난·순조 (평길)';
+  if (score >= 63) return '⚖️ 차분히 관리 (신중)';
+  return '⚡ 에너지 아끼기 (주의)';
+}
+
+/* =========================================================
+   7. 메인 운세 생성 및 연령대 × 사주 × MBTI 조합
+   ========================================================= */
+function runFortune() {
+  const name = document.getElementById('userName').value.trim().replace(/[<>]/g, '').slice(0, 30);
+  const rawBirth = document.getElementById('birthInput').value.replace(/[^0-9]/g, '');
+  const timeSlot = document.getElementById('birthTimeSlot').value;
+  const mbti = document.getElementById('userMbti').value;
+
+  if (!name) {
+    alert('운세 대상자의 닉네임 또는 이름을 입력해 주세요.');
+    document.getElementById('userName').focus();
+    return;
+  }
+  if (rawBirth.length !== 8) {
+    alert('생년월일 숫자 8자리(예: 19980515)를 정확히 입력해 주세요.');
+    document.getElementById('birthInput').focus();
+    return;
+  }
+  if (!mbti) {
+    alert('MBTI 성향을 선택해 주세요.');
+    document.getElementById('userMbti').focus();
+    return;
+  }
+
+  let inputY = parseInt(rawBirth.slice(0,4), 10);
+  let inputM = parseInt(rawBirth.slice(4,6), 10);
+  let inputD = parseInt(rawBirth.slice(6,8), 10);
+
+  if (inputY < 1930 || inputY > new Date().getFullYear() || !isValidDate(inputY, inputM, inputD)) {
+    alert('실제로 존재하는 생년월일을 입력해 주세요.');
+    return;
+  }
+
+  playTone('reveal');
+
+  // 음력 선택 시 양력 자동 변환
+  let solarY = inputY, solarM = inputM, solarD = inputD;
+  if (calType !== 'solar') {
+    if (inputY < 1940 || inputY > 2030) { alert('음력 변환 지원 범위는 1940~2030년입니다.'); return; }
+    const leapMonth = getLunarLeapMonth(inputY);
+    if (calType === 'leap' && leapMonth !== inputM) { alert('선택한 연도와 월에는 윤달이 없습니다.'); return; }
+    const monthDays = calType === 'leap' ? getLunarLeapDays(inputY) : getLunarMonthDays(inputY, inputM);
+    if (inputD > monthDays) { alert('해당 음력 월에 존재하지 않는 날짜입니다.'); return; }
+    let conv;
+    try { conv = lunarToSolar(inputY, inputM, inputD, calType === 'leap'); }
+    catch (e) { alert(e.message || '음력 날짜를 변환할 수 없습니다.'); return; }
+    solarY = conv.y; solarM = conv.m; solarD = conv.d;
+  }
+
+  const unknownTime = (timeSlot === 'unknown');
+  const [bh, bmin] = unknownTime ? [12, 0] : timeSlot.split(':').map(Number);
+
+  // 1) 개인 사주 계산
+  const userSaju = calculateSaju(solarY, solarM, solarD, bh, bmin, unknownTime);
+
+  // 2) 기준일(오늘 또는 내일) 일진 계산
+  const targetDate = getTargetDateObj();
+  const tY = targetDate.getFullYear();
+  const tM = targetDate.getMonth() + 1;
+  const tD = targetDate.getDate();
+  const targetDateStr = `${tY}-${String(tM).padStart(2,'0')}-${String(tD).padStart(2,'0')}`;
+  const dayLabel = targetDayOffset === 0 ? '오늘' : '내일';
+
+  const todaySaju = calculateSaju(tY, tM, tD, 12, 0, false);
+
+  // 3) 연령대 산출
+  const age = getExactAge(solarY, solarM, solarD, targetDate);
+  if (age < 0 || age > 120) { alert("출생일을 다시 확인해 주세요."); return; }
+  const ageInfo = getAgeGroupInfo(age);
+
+  // 4) 오늘 일진의 십성 & 합충 관계 (쉬운 우리말)
+  const todayTenGod = getTenGod(userSaju.day.stem, STEM_EL[todaySaju.day.stem], STEM_YY[todaySaju.day.stem]);
+  const todayTenEasy = TENGOD_EASY_NAME[todayTenGod];
+  const inter = analyzeInteractionsEasy(
+    userSaju.day.stem,
+    userSaju.day.branch,
+    userSaju.month.branch,
+    todaySaju.day.stem,
+    todaySaju.day.branch,
+    [userSaju.year.branch, userSaju.month.branch, userSaju.day.branch, ...(userSaju.time ? [userSaju.time.branch] : [])],
+    [userSaju.year.stem, userSaju.month.stem, userSaju.day.stem, ...(userSaju.time ? [userSaju.time.stem] : [])]
+  );
+
+  // 5) 오행 참고 키워드: 검증되지 않은 용신 판정·점수 가산은 사용하지 않음
+  const yongsinEl = userSaju.yongsinEl;
+  const maxEl = userSaju.maxEl;
+  const todayStemEl = STEM_EL[todaySaju.day.stem];
+  const todayBranchEl = BRANCH_EL[todaySaju.day.branch];
+  const yongsinBonus = 0; // 검증되지 않은 용신 추정은 운세 점수에 반영하지 않는다.
+  const yongsinMatchDesc = `${dayLabel}의 일진은 사주 원국과 함께 참고하되, 단순 오행 가중치만으로 길흉이나 용신의 작동을 단정하지 않습니다. [${EL_INFO[yongsinEl].kr}]은 생활 균형을 위한 참고 키워드로만 활용하세요.`;
+
+  // 6) 결정론적 시드 생성
+  const seedKey = `${solarY}-${solarM}-${solarD}_${timeSlot}_${targetDateStr}`; // MBTI는 운세 점수에 영향을 주지 않음
+  const rng = createPRNG(seedKey);
+
+  const tgPool = TENGOD_POOL[todayTenGod];
+  const mbtiInfo = MBTI_DATA[mbti];
+  const crossAnalysis = getCrossAnalysis(userSaju, mbti);
+
+  // 분야별 점수 계산
+  const workScore   = clampScore(75 + tgPool.mods.work   + inter.mods.work   + yongsinBonus + (rng() * 10 - 5));
+  const moneyScore  = clampScore(74 + tgPool.mods.money  + inter.mods.money  + yongsinBonus + (rng() * 12 - 6));
+  const loveScore   = clampScore(75 + tgPool.mods.love   + inter.mods.love   + yongsinBonus + (rng() * 12 - 6));
+  const healthScore = clampScore(76 + tgPool.mods.health + inter.mods.health + (rng() * 10 - 5));
+  const socialScore = clampScore(75 + tgPool.mods.social + inter.mods.social + yongsinBonus + (rng() * 10 - 5));
+  const studyScore  = clampScore(76 + tgPool.mods.study  + yongsinBonus      + (rng() * 10 - 5));
+  // 분야별 참고 점수의 편집 가중 평균. 실제 길흉 확률이나 통계적 예측값은 아니다.
+  const totalScore = clampScore(
+    workScore * 0.22 + moneyScore * 0.18 + loveScore * 0.16 +
+    healthScore * 0.14 + socialScore * 0.16 + studyScore * 0.14
+  );
+
+  const myAnimalNick = userSaju.day.animal;
+  const todayAnimalNick = getGanjiAnimalNickname(todaySaju.day.stem, todaySaju.day.branch);
+  const todayGanjiEasy = `${STEMS[todaySaju.day.stem]}${BRANCHES[todaySaju.day.branch]}일 (${todayAnimalNick}의 날)`;
+
+  const isE = mbti[0] === 'E';
+  const isN = mbti[1] === 'N';
+  const isT = mbti[2] === 'T';
+  const isJ = mbti[3] === 'J';
+
+  const fusionText = `${name}님의 사주상 중심 상징은 [${myAnimalNick} — ${STEM_NATURE_DESC[userSaju.day.stem]}]이며, MBTI는 ${mbtiInfo.title}입니다. ${crossAnalysis.harmony} 현재 ${ageInfo.badge} 시기에는 ${ageInfo.workContext} 이 관점을 활용해 보세요. 두 체계는 서로 다른 참고 틀이므로 동일한 성격을 증명하거나 운명을 확정하지 않습니다.`;
+
+  // 동적 카테고리 정의 (연령대별 탭 이름 자동 반영)
+  const dynamicCategories = [
+    { id: 'total',  name: '🌟 종합총평' },
+    { id: 'work',   name: ageInfo.workTabName },
+    { id: 'money',  name: ageInfo.moneyTabName },
+    { id: 'love',   name: ageInfo.loveTabName },
+    { id: 'health', name: '🌿 건강·컨디션' },
+    { id: 'social', name: '🤝 인간관계운' },
+    { id: 'study',  name: '📚 집중·성장운' },
+    { id: 'lucky',  name: '🍀 행운처방전' }
+  ];
+
+  const details = {
+    total: {
+      title: `🌟 ${dayLabel}의 종합 총평 (${ageInfo.badge} 맞춤)`,
+      score: totalScore,
+      main: `${name}님의 타고난 [${myAnimalNick}] 기질이 ${dayLabel}의 [${todayGanjiEasy}] 기운과 만나 '${todayTenEasy}'(${tgPool.vibe})의 흐름을 만듭니다. 전체적인 하루의 결은 [${inter.summary}]로 흐릅니다. ${yongsinMatchDesc} 특히 ${ageInfo.badge} 시기인 지금, ${mbti} 성향의 최대 무기인 '${mbtiInfo.strength}'을 살려 움직이면 기대 이상의 성취를 손에 쥘 수 있습니다.`,
+      good: `${ageInfo.workContext} 나만의 색깔을 드러낼 때 주변의 호응과 인정이 빠르게 따라옵니다.`,
+      warn: `${mbti} 성향상 나타나기 쉬운 '${mbtiInfo.caution}'만 의식적으로 조절하면 에너지 누수가 없습니다.`,
+      act: `${mbtiInfo.tip} 더불어 생활 균형 참고 행동인 [${EL_INFO[yongsinEl].supplement}]을 가볍게 실천해 보세요.`
+    },
+    work: {
+      title: ageInfo.workTitle,
+      score: workScore,
+      main: `${dayLabel}은 ${ageInfo.workContext} '${todayTenEasy}'의 기운이 작동하여, ${tgPool.work} 특히 ${name}님의 ${mbtiInfo.title} 성향이 가진 '${mbtiInfo.strength}'을 발휘하면 막혔던 과제도 수월하게 돌파할 수 있습니다.`,
+      good: `${isN ? '참신한 아이디어나 큰 그림을 먼저 제안할 때' : '정확한 데이터와 눈에 보이는 결과물을 먼저 제시할 때'} 가장 좋은 평가를 받습니다.`,
+      warn: `${isT ? '일 처리 속도에만 집중하다 함께하는 사람의 기분을 놓치는 점' : '주변 분위기를 맞추느라 내 핵심 우선순위를 뒤로 미루는 점'}을 주의하세요.`,
+      act: `시작하기 전에 오늘 꼭 끝낼 핵심 목표 딱 3가지만 메모해 두고 하나씩 지워나가세요.`
+    },
+    money: {
+      title: ageInfo.moneyTitle,
+      score: moneyScore,
+      main: `${ageInfo.moneyContext} ${dayLabel}의 금전 흐름을 보면, ${tgPool.money} ${name}님은 [${userSaju.strengthEasy}] 사주 구조를 지녔으므로 [${EL_INFO[yongsinEl].easy}]의 감각으로 예산을 조율할 때 실속이 커집니다.`,
+      good: `${moneyScore >= 78 ? '내가 공들여 온 일이나 계획된 예산 안에서 기분 좋은 이득과 만족감이 따릅니다.' : '새어 나가는 정기 결제나 불필요한 지출을 점검하면 생각보다 큰돈을 아낄 수 있습니다.'}`,
+      warn: `${moneyScore < 70 ? '분위기에 휩쓸린 기분파 결제나 충동구매 유혹이 강해지는 날이니 장바구니에 담아두고 하루만 미루세요.' : '작은 소액 결제라도 습관적으로 나가는 비용만 체크하면 완벽한 하루입니다.'}`,
+      act: `결제나 금전 결정을 내리기 전 10분만 여유를 두고 "정말 지금 꼭 필요한가?"를 한 번 더 확인하세요.`
+    },
+    love: {
+      title: ageInfo.loveTitle,
+      score: loveScore,
+      main: `${ageInfo.loveContext} ${tgPool.love} 여기에 ${name}님의 [${myAnimalNick}] 기질과 ${mbti}의 솔직하고 따뜻한 매력이 어우러져 자연스럽게 호감을 끌어당깁니다.`,
+      good: `${inter.hasHarmony ? '마음의 주파수가 잘 맞는 날이라 가벼운 안부 문자나 대화만으로도 분위기가 한껏 달아오릅니다.' : '꾸밈없는 밝은 리액션과 따뜻한 칭찬 한마디가 상대방의 마음을 활짝 열어줍니다.'}`,
+      warn: `${inter.hasConflict ? '사소한 말투나 연락 속도 때문에 괜한 오해가 생길 수 있으니 섣부른 단정은 피하세요.' : '상대방의 속마음을 혼자 추측하기보다 편안하게 물어보며 대화하는 것이 좋습니다.'}`,
+      act: `대화를 나눌 때 내 이야기 40%, 상대방 이야기 60% 비율로 들어주면 매력이 두 배로 빛납니다.`
+    },
+    health: {
+      title: '🌿 건강 · 체력 · 컨디션 관리운',
+      score: healthScore,
+      main: `현재 계산상 [${EL_INFO[maxEl].kr}] 가중치가 상대적으로 높고 [${EL_INFO[yongsinEl].kr}] 가중치가 낮게 나타나므로 생활 리듬을 점검하는 참고 요소입니다. ${mbti} 성향상 ${isE ? '사람들과의 활동 뒤 혼자 회복할 시간도 확보' : '혼자 몰입한 뒤 가볍게 몸을 움직이며 전환'}하는 방식이 도움이 될 수 있습니다. 이는 건강 진단이 아닌 생활 리듬 참고 조언입니다.`,
+      good: `낮 시간대에 15분만 햇볕을 쬐며 걷거나 가벼운 스트레칭을 해도 머리가 맑게 리셋됩니다.`,
+      warn: `피곤하다고 카페인 음료를 연달아 마시거나 밤늦게까지 스마트폰을 보면 다음 날 리듬이 깨질 수 있습니다.`,
+      act: `따뜻한 물을 자주 마시고, [${EL_INFO[yongsinEl].supplement}]으로 몸의 긴장을 풀어주세요.`
+    },
+    social: {
+      title: ageInfo.socialTitle,
+      score: socialScore,
+      main: `${ageInfo.socialContext} ${dayLabel}은 '${todayTenEasy}'의 흐름과 함께 [${inter.summary}] 기운이 작용합니다. ${mbtiInfo.title}다운 '${mbtiInfo.strength}'을 편안하게 보여줄수록 나를 돕는 좋은 사람(귀인)이 가까워집니다.`,
+      good: `코드가 잘 맞는 친구나 동료와의 대화 속에서 고민하던 문제의 힌트와 기분 좋은 에너지를 얻습니다.`,
+      warn: `모든 사람의 기분을 다 맞춰주려 애쓰거나 반대로 내 생각만 맞다고 고집하지 않도록 적당한 거리를 유지하세요.`,
+      act: `고마웠던 사람이나 반가운 지인에게 짧은 안부 인사나 따뜻한 말 한마디를 먼저 건네보세요.`
+    },
+    study: {
+      title: ageInfo.studyTitle,
+      score: studyScore,
+      main: `${ageInfo.studyContext} 타고난 [${myAnimalNick}]의 집중력과 ${mbti}의 장점이 결합되어 머리가 맑게 돌아가는 날입니다. 새로운 내용을 배우거나 기획·창작 작업을 하기에 아주 좋은 흐름입니다.`,
+      good: `40분 집중하고 10분 쉬는 식으로 짧게 끊어서 몰입하면 평소보다 훨씬 빠르게 목표량을 채웁니다.`,
+      warn: `완벽한 계획을 세우느라 시작 시간을 늦추거나 여러 가지를 동시에 펼쳐놓지 마세요.`,
+      act: `${dayLabel} 가장 중요한 핵심 과제 딱 1가지를 먼저 정해 첫 30분 동안 스마트폰을 멀리 두고 집중해 보세요.`
+    },
+    lucky: {
+      title: `🍀 ${dayLabel}의 맞춤 행운 처방전`,
+      score: clampScore((workScore + moneyScore + loveScore + healthScore + socialScore + studyScore) / 6),
+      main: `${name}님의 단순 오행 가중치에서 상대적으로 낮게 나타난 참고 보완 오행은 [${EL_INFO[yongsinEl].kr} — ${EL_INFO[yongsinEl].easy}]입니다. 아래의 행운 포인트들을 일상에 가볍게 활용해 보세요.`,
+      good: `행운의 색상을 옷차림이나 소품, 배경화면에 활용하면 기분 전환과 집중력 상승에 큰 도움이 됩니다.`,
+      warn: `공기가 탁하거나 책상 주변이 어수선하면 좋은 운의 흐름이 둔해질 수 있습니다.`,
+      act: `일과를 시작하기 전에 창문을 열어 환기하고 [${EL_INFO[yongsinEl].supplement}]을 실천해 보세요.`
+    }
+  };
+
+  // 최고 점수 분야(BEST) & 최저 점수 분야(CARE) 찾기 (total, lucky 제외 6개 중)
+  const targetKeys = ['work','money','love','health','social','study'];
+  let bestKey = targetKeys[0], careKey = targetKeys[0];
+  targetKeys.forEach(k => {
+    if (details[k].score > details[bestKey].score) bestKey = k;
+    if (details[k].score < details[careKey].score) careKey = k;
+  });
+
+  const bestCatName = dynamicCategories.find(c => c.id === bestKey).name;
+  const careCatName = dynamicCategories.find(c => c.id === careKey).name;
+
+  // 시간대별 리듬 (오전 / 오후 / 밤)
+  const timeRhythm = [
+    {
+      time: '🌅 오전 (07:00 ~ 12:00)',
+      desc: isJ ? '오늘 할 일의 우선순위를 정리하고 가장 중요한 과제를 시작하기에 머리가 가장 맑은 시간입니다.' : '가벼운 워밍업과 환기로 에너지를 깨우고, 떠오르는 아이디어를 메모해 두면 좋은 시간입니다.'
+    },
+    {
+      time: '☀️ 오후 (12:00 ~ 18:00)',
+      desc: `오늘의 핵심 기운인 '${todayTenEasy}' 에너지가 가장 활발해지는 골든타임입니다. 중요한 연락이나 활동은 오후에 배치하세요.`
+    },
+    {
+      time: '🌙 저녁·밤 (18:00 ~ 24:00)',
+      desc: inter.hasConflict ? '새로운 결정을 내리기보다 하루를 차분히 마무리하고 나만의 힐링 시간으로 에너지를 충전하세요.' : '소중한 사람과 따뜻한 대화를 나누거나 개인 창작·취미 활동에 몰입하기 좋은 편안한 밤입니다.'
+    }
+  ];
+
+  // 사주 맥락과 일관성을 맞춘 운명 카드 풀
+  const cardCandidates = [
+    { icon: '☀️', name: '당당한 주인공 카드', desc: `${dayLabel}은 ${name}님의 [${myAnimalNick}] 기질과 ${mbti}의 강점이 빛나는 날입니다. 망설이던 일이 있다면 자신 있게 첫발을 내디뎌 보세요.` },
+    { icon: '🧭', name: '행운의 나침반 카드', desc: `${bestCatName}(${details[bestKey].score}점) 분야에서 기분 좋은 흐름이 기다리고 있습니다. 우연히 스치는 제안이나 아이디어를 놓치지 마세요.` },
+    { icon: '⚖️', name: '황금 밸런스 카드', desc: `${careCatName} 분야는 무리하지 않고 한 템포 여유를 두는 것이 좋습니다. 열정 70%와 휴식 30%의 균형이 완벽한 하루를 만듭니다.` },
+    { icon: '🌱', name: '성장의 씨앗 카드', desc: `${dayLabel} 실천하는 [${EL_INFO[yongsinEl].supplement}] 하나가 조만간 생각지도 못한 기분 좋은 보상으로 돌아옵니다.` },
+    { icon: '🔑', name: '열리는 해답 카드', desc: `혼자 고민하던 문제도 관점을 살짝 바꾸거나 주변과 가볍게 소통하면 의외로 쉽게 풀리는 전환점의 날입니다.` },
+    { icon: '🛡️', name: '지혜의 방패 카드', desc: `남들의 빠른 속도에 조급해할 필요 없습니다. ${name}님만의 기준과 페이스를 지키는 것이 가장 확실하게 이기는 길입니다.` }
+  ];
+  const shuffledTarot = cardCandidates.sort(() => rng() - 0.5).slice(0, 3);
+
+  const luckyColorMap = { wood: '초록 · 민트 그린', fire: '레드 · 핑크 · 퍼플', earth: '골드 옐로우 · 베이지', metal: '화이트 · 실버', water: '블루 · 네이비 · 블랙' };
+  const luckyDirMap = { wood: '동쪽 (창가 방향)', fire: '남쪽 (밝은 조명 쪽)', earth: '중앙 · 안정된 실내', metal: '서쪽 (정돈된 공간)', water: '북쪽 (조용한 공간)' };
+  const luckyTimeMap = { wood: '오전 08시 ~ 11시', fire: '낮 11시 ~ 15시', earth: '오후 14시 ~ 17시', metal: '오후 15시 ~ 19시', water: '저녁 20시 ~ 23시' };
+
+  currentResult = {
+    name, rawBirth, calType, solarY, solarM, solarD, timeSlot, mbti, unknownTime,
+    ageInfo, dayLabel, targetDateStr,
+    userSaju, todaySaju, todayTenGod, todayTenEasy, inter,
+    totalScore, bestKey, careKey, bestCatName, careCatName,
+    dynamicCategories,
+    headline: `${tgPool.vibe} — ${ageInfo.badge} ${mbtiInfo.title} 맞춤 운세`,
+    fusionText, crossAnalysis,
+    timeRhythm,
+    details,
+    lucky: {
+      color: luckyColorMap[yongsinEl],
+      time: luckyTimeMap[yongsinEl],
+      direction: luckyDirMap[yongsinEl],
+      yongsin: `${EL_INFO[yongsinEl].kr} (${EL_INFO[yongsinEl].easy})`
+    },
+    tarot: shuffledTarot
+  };
+
+  saveRecentUser({ name, rawBirth, calType, timeSlot, mbti });
+  renderResult();
+}
+
+/* =========================================================
+   8. 화면 렌더링 및 복사 기능
+   ========================================================= */
+function buildCategoryCardHTML(catId, d, isBest, isCare) {
+  const badgeCls = getScoreBadgeClass(d.score);
+  const gradeLabel = getScoreGradeLabel(d.score);
+  let extraBadge = '';
+  if (isBest) extraBadge = `<span style="background:#22c55e; color:#052e16; font-size:13px; padding:3px 10px; border-radius:999px; margin-left:8px;">🔥 오늘 최고 분야</span>`;
+  else if (isCare) extraBadge = `<span style="background:#f97316; color:#fff; font-size:13px; padding:3px 10px; border-radius:999px; margin-left:8px;">⚡ 집중 관리 분야</span>`;
+
+  return `
+    <div class="category-detail" id="catBlock_${catId}">
+      <div class="cat-header">
+        <div class="cat-title">${d.title} ${extraBadge}</div>
+        <div class="cat-score ${badgeCls}">${d.score}점 · ${gradeLabel}</div>
+      </div>
+      <p class="cat-main-text">${d.main}</p>
+      <div class="sub-boxes">
+        <div class="info-box good">
+          <div class="info-box-title">✨ 잘 풀리는 포인트 (기질 + 성향 시너지)</div>
+          <p>${d.good}</p>
+        </div>
+        <div class="info-box warn">
+          <div class="info-box-title">⚠️ 조심할 포인트 (성향 사각지대 체크)</div>
+          <p>${d.warn}</p>
+        </div>
+        <div class="info-box act">
+          <div class="info-box-title">🎯 바로 실천하는 행운 행동 지침</div>
+          <p>${d.act}</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderResult() {
+  const r = currentResult;
+
+  // 입력창 접기
+  document.getElementById('inputCardSection').style.display = 'none';
+  const collapsedBar = document.getElementById('collapsedInputBar');
+  collapsedBar.style.display = 'flex';
+  document.getElementById('collapsedSummaryText').textContent = `🔮 ${r.name} 님 (${r.ageInfo.badge} · ${r.mbti})`;
+  document.getElementById('collapsedSubText').textContent =
+    `양력 ${r.solarY}.${r.solarM}.${r.solarD} · 타고난 기질: ${r.userSaju.day.animal}`;
+
+  document.getElementById('emptyNotice').style.display = 'none';
+  document.getElementById('resultArea').style.display = 'block';
+
+  // 1) 진행자용 3줄 핵심 브리핑 & 시간대별 리듬
+  document.getElementById('mcTitle').textContent = `🎙️ [${r.name} 님] 한눈에 읽는 ${r.dayLabel}의 3줄 핵심 브리핑`;
+  document.getElementById('mcLines').innerHTML = `
+    <div class="mc-line"><strong>① 오늘의 한 줄 요약:</strong> 타고난 [${r.userSaju.day.animal}] 기질에 '${r.todayTenEasy}' 기운이 더해져 <strong>종합 ${r.totalScore}점(${getScoreGradeLabel(r.totalScore)})</strong>의 흐름입니다.</div>
+    <div class="mc-line"><strong>② 가장 잘 풀리는 분야:</strong> <strong>${r.bestCatName}(${r.details[r.bestKey].score}점)</strong> 운이 가장 강력하니 ${r.mbti} 특유의 강점을 살려 적극적으로 움직이세요.</div>
+    <div class="mc-line"><strong>③ 에너지 관리 포인트:</strong> <strong>${r.careCatName}(${r.details[r.careKey].score}점)</strong> 분야는 무리하지 말고 <strong>[${r.lucky.yongsin}]</strong>과 행운 컬러(<strong>${r.lucky.color}</strong>)로 밸런스를 챙기세요.</div>
+  `;
+
+  document.getElementById('timeRhythmGrid').innerHTML = r.timeRhythm.map(t => `
+    <div class="rhythm-box">
+      <div class="rhythm-time">${t.time}</div>
+      <div class="rhythm-desc">${t.desc}</div>
+    </div>
+  `).join('');
+
+  // 2) 종합 점수 및 사주 원국
+  document.getElementById('resUserBadge').textContent = `${r.name} 님 · ${r.ageInfo.badge} · ${r.mbti}`;
+  document.getElementById('resTotalScore').textContent = `${r.totalScore}점`;
+  document.getElementById('resTotalGrade').textContent = getScoreGradeLabel(r.totalScore);
+  document.getElementById('resHeadline').textContent = r.headline;
+
+  const tStem = r.todaySaju.day.stem;
+  const tBranch = r.todaySaju.day.branch;
+  const todayNick = getGanjiAnimalNickname(tStem, tBranch);
+  document.getElementById('resIljinRelation').innerHTML =
+    `• <strong>${r.dayLabel}의 날짜 기운:</strong> ${STEMS[tStem]}${BRANCHES[tBranch]}일 (${todayNick}의 날)<br>` +
+    `• <strong>들어오는 핵심 운기:</strong> [${r.todayTenEasy}] 에너지<br>` +
+    `• <strong>하루의 흐름 특징:</strong> ${r.inter.summary}`;
+
+  // 사주 4기둥 표 (자연물 별칭 포함)
+  const cols = [
+    { label: '태어난 시간(시주)', data: r.userSaju.time, isMe: false },
+    { label: '나의 본질(일주★)', data: r.userSaju.day, isMe: true },
+    { label: '태어난 달(월주)', data: r.userSaju.month, isMe: false },
+    { label: '태어난 해(년주)', data: r.userSaju.year, isMe: false }
+  ];
+
+  const pillarsHtml = cols.map(c => {
+    if (!c.data) {
+      return `
+        <div class="pillar-col">
+          <div class="pillar-label">${c.label}</div>
+          <div class="pillar-ten">시간 모름</div>
+          <div class="ganji-char" style="background:#1e293b;">-</div>
+          <div class="ganji-char" style="background:#1e293b;">-</div>
+          <div class="pillar-sub">생년월일 기준</div>
+          <div class="pillar-animal">3기둥 분석</div>
+        </div>
+      `;
+    }
+    const sEl = STEM_EL[c.data.stem];
+    const bEl = BRANCH_EL[c.data.branch];
+    return `
+      <div class="pillar-col ${c.isMe ? 'me-col' : ''}">
+        <div class="pillar-label">${c.label}</div>
+        <div class="pillar-ten">${c.data.tenStem}</div>
+        <div class="ganji-char ${EL_INFO[sEl].cls}">${STEMS[c.data.stem]}<small style="font-size:13px; margin-left:2px;">${STEMS_HANJA[c.data.stem]}</small></div>
+        <div class="ganji-char ${EL_INFO[bEl].cls}">${BRANCHES[c.data.branch]}<small style="font-size:13px; margin-left:2px;">${BRANCHES_HANJA[c.data.branch]}</small></div>
+        <div class="pillar-sub">${STEMS[c.data.stem]}${BRANCHES[c.data.branch]}</div>
+        <div class="pillar-animal">${c.data.animal}</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('pillarsGrid').innerHTML = pillarsHtml;
+
+  document.getElementById('strengthBar').innerHTML = `
+    <span class="s-tag">나의 중심 상징: <strong>${r.userSaju.day.animal}</strong></span>
+    <span class="s-tag">일간 지원 참고: <strong>${r.userSaju.strengthEasy}</strong></span>
+    <span class="s-tag">참고 보완 오행: <strong>${EL_INFO[r.userSaju.yongsinEl].kr} (${EL_INFO[r.userSaju.yongsinEl].easy})</strong></span>
+  `;
+
+  const totalChars = 1; // 표시 호환용; 막대는 상대 가중치로 정규화
+  const barsHtml = EL_ORDER.map(el => {
+    const cnt = r.userSaju.counts[el];
+    const pct = Math.round((cnt / Math.max(1, ...EL_ORDER.map(k => r.userSaju.counts[k]))) * 100);
+    const isYong = (el === r.userSaju.yongsinEl);
+    return `
+      <div class="ohaeng-row">
+        <div class="ohaeng-name" style="color:${EL_INFO[el].color}">${EL_INFO[el].kr}</div>
+        <div class="ohaeng-track">
+          <div class="ohaeng-fill" style="width:${pct}%; background:${EL_INFO[el].color}"></div>
+        </div>
+        <div class="ohaeng-val">${cnt.toFixed(1)} ${isYong ? '(참고★)' : ''}</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('ohaengBars').innerHTML = barsHtml;
+
+  document.getElementById('fusionDesc').textContent = r.fusionText;
+  const ca = r.crossAnalysis;
+  document.getElementById('crossAnalysisPanel').innerHTML = `
+    <h3>🔎 사주 × MBTI 교차 해석</h3>
+    <p><strong>MBTI 행동 선호:</strong> ${Object.values(ca.axes).join(' · ')}</p>
+    <p><strong>함께 볼 지점:</strong> ${ca.tension}</p>
+    <p><strong>오늘의 실천:</strong> ${ca.advice}</p>
+    <p class="method-note">사주의 오행 상징과 MBTI 선호를 콘텐츠 목적으로 나란히 해석한 것입니다. 특정 오행이 특정 MBTI 성격을 만든다는 뜻은 아니며, MBTI는 자기보고식 유형 지표입니다.</p>
+  `;
+
+  document.getElementById('luckyGrid').innerHTML = `
+    <div class="lucky-item"><span>행운의 컬러</span><strong>${r.lucky.color}</strong></div>
+    <div class="lucky-item"><span>황금 시간대</span><strong>${r.lucky.time}</strong></div>
+    <div class="lucky-item"><span>행운의 공간·방향</span><strong>${r.lucky.direction}</strong></div>
+    <div class="lucky-item"><span>참고 보완 오행</span><strong>${r.lucky.yongsin}</strong></div>
+  `;
+
+  document.getElementById('catSectionHeader').textContent = `🧭 ${r.ageInfo.badge} 맞춤 8대 분야별 상세 해설`;
+  activeCategory = 'total';
+  renderCategorySection();
+  renderTarotCards();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderCategorySection() {
+  const r = currentResult;
+  const tabsHtml = r.dynamicCategories.map(cat => {
+    const sc = r.details[cat.id].score;
+    let tagHtml = '';
+    if (cat.id === r.bestKey) tagHtml = `<span class="tab-tag tag-best">🔥 최고</span>`;
+    else if (cat.id === r.careKey) tagHtml = `<span class="tab-tag tag-care">⚡ 관리</span>`;
+
+    return `
+      <button class="tab-btn ${(!isAllExpanded && cat.id === activeCategory) ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+        ${tagHtml}
+        <span>${cat.name}</span>
+        <span class="mini-score">${sc}점</span>
+      </button>
+    `;
+  }).join('');
+  document.getElementById('categoryTabs').innerHTML = tabsHtml;
+
+  const singleWrap = document.getElementById('singleCategoryContainer');
+  const allWrap = document.getElementById('allCategoriesContainer');
+
+  if (isAllExpanded) {
+    singleWrap.style.display = 'none';
+    allWrap.style.display = 'block';
+    allWrap.innerHTML = r.dynamicCategories.map(cat =>
+      buildCategoryCardHTML(cat.id, r.details[cat.id], cat.id === r.bestKey, cat.id === r.careKey)
+    ).join('');
+    document.getElementById('viewModeBtn').textContent = '📑 탭별로 하나씩 보기';
+  } else {
+    allWrap.style.display = 'none';
+    singleWrap.style.display = 'block';
+    singleWrap.innerHTML = buildCategoryCardHTML(
+      activeCategory,
+      r.details[activeCategory],
+      activeCategory === r.bestKey,
+      activeCategory === r.careKey
+    );
+    document.getElementById('viewModeBtn').textContent = '📖 8대 분야 한눈에 펼쳐보기';
+  }
+}
+
+function toggleViewMode() {
+  playTone('tab');
+  isAllExpanded = !isAllExpanded;
+  renderCategorySection();
+}
+
+function selectCategory(catId) {
+  playTone('tab');
+  activeCategory = catId;
+  if (isAllExpanded) {
+    const target = document.getElementById(`catBlock_${catId}`);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    renderCategorySection();
+  }
+}
+
+function renderTarotCards() {
+  const grid = document.getElementById('tarotGrid');
+  grid.innerHTML = currentResult.tarot.map((c, idx) => `
+    <div class="tarot-card" id="tarotCard_${idx}" onclick="flipTarot(${idx})">
+      <div class="tarot-icon">🎴</div>
+      <div class="tarot-name">운명 조언 카드 #${idx + 1}</div>
+      <div class="tarot-desc">터치하여 오늘의 맞춤 메시지 확인</div>
+    </div>
+  `).join('');
+}
+
+function flipTarot(idx) {
+  playTone('card');
+  const cardData = currentResult.tarot[idx];
+  const el = document.getElementById(`tarotCard_${idx}`);
+  el.classList.add('picked');
+  el.innerHTML = `
+    <div class="tarot-icon">${cardData.icon}</div>
+    <div class="tarot-name">${cardData.name}</div>
+    <div class="tarot-desc">${cardData.desc}</div>
+  `;
+}
+
+function copySummaryText() {
+  if (!currentResult) return;
+  const r = currentResult;
+  const text = `[오늘의 운명 — ${r.name}님(${r.ageInfo.badge}·${r.mbti}) ${r.dayLabel} 운세] ` +
+    `타고난 기질: ${r.userSaju.day.animal} | 종합점수: ${r.totalScore}점(${getScoreGradeLabel(r.totalScore)}) | ` +
+    `최고 분야: ${r.bestCatName}(${r.details[r.bestKey].score}점) | 행운 컬러: ${r.lucky.color} | 황금 시간대: ${r.lucky.time}`;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('핵심 운세 요약이 클립보드에 복사되었습니다! 채팅창이나 메신저에 바로 붙여넣으실 수 있습니다.');
+  }).catch(() => {
+    prompt('아래 내용을 복사해 사용하세요:', text);
+  });
+}
+
+/* =========================================================
+   9. 최근 조회 로컬 저장
+   ========================================================= */
+function saveRecentUser(item) {
+  try {
+    let list = JSON.parse(localStorage.getItem('destiny_recent_users_v4') || '[]');
+    list = list.filter(x => x.name !== item.name);
+    list.unshift(item);
+    list = list.slice(0, 6);
+    localStorage.setItem('destiny_recent_users_v4', JSON.stringify(list));
+    renderRecentChips();
+  } catch (e) {}
+}
+
+function renderRecentChips() {
+  try {
+    const list = JSON.parse(localStorage.getItem('destiny_recent_users_v4') || '[]');
+    const wrap = document.getElementById('recentChips');
+    if (!list.length) {
+      wrap.innerHTML = '<span style="font-size:15px; color:#94a3b8;">아직 조회 기록이 없습니다</span>';
+      return;
+    }
+    wrap.innerHTML = list.map((u, idx) => `
+      <button class="chip" onclick="loadRecentUser(${idx})">${escapeHTML(u.name)} (${escapeHTML(u.mbti)})</button>
+    `).join('');
+  } catch (e) {}
+}
+
+function loadRecentUser(idx) {
+  try {
+    const list = JSON.parse(localStorage.getItem('destiny_recent_users_v4') || '[]');
+    const u = list[idx];
+    if (!u) return;
+    document.getElementById('userName').value = u.name;
+    document.getElementById('birthInput').value = u.rawBirth;
+    handleBirthInput(document.getElementById('birthInput'));
+    setCalType(u.calType || 'solar');
+    document.getElementById('birthTimeSlot').value = u.timeSlot || 'unknown';
+    document.getElementById('userMbti').value = u.mbti;
+    runFortune();
+  } catch (e) {}
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateHeaderDateBanner();
+  renderRecentChips();
+});
+</script>
+</body>
+</html>
